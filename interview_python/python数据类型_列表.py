@@ -29,7 +29,7 @@ python面试问题
 """
 33. [[1,2], [3,4], [5,6]]一行代码展开该列表，得出[1,2,3,4,5,6]
 	a = [[1,2], [3,4], [5, 6]]
-	result = [i for midList in a for midList in a]
+	result = [i for midList in a for i in midList]
 """
 
 """
