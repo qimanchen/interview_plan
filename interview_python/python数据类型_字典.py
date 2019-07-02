@@ -36,3 +36,10 @@ python面试问题
 	d = {'a':'1', 'b':'2'}
 	print({v:k for k, v in d.items()})
 """
+
+"""
+40. 如何把元组("a", "b") 和 元组(1,2)变成字典
+	a = ("a", "b")
+	b = (1, 2)
+	print(dict(zip(a, b)))
+"""
