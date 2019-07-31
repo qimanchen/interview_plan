@@ -1,0 +1,12 @@
+# nginx三大功能
+1. 反向代理
+2. 负载均衡
+	a. 轮询
+	b. ip hash
+	c. fair
+	d. url hash
+3. 静态资源服务器
+	a. 静态页面
+	b. js
+	c. css
+	d. 图片
