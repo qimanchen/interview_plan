@@ -1,0 +1,105 @@
+# lvs - linux虚拟服务器的vs/NAT的实验
+
+# 删除前面所有的ipvsadm的设置
+sudo ipvsadm -C
+# 删除之前所有的container
+	1. 关闭所有的container
+		docker stop $(docker ps -aq)
+	2. 删除所有的container
+		docker stop $(docker ps -aq)
+
+1.1 实验集群环境的搭建
+	a. load Balancer
+	b. 后端服务器集群
+
+整个集群系统的架构：
+	a. 宿主机浏览器，充当客服端
+	b. LoadBalancer，装有ipvsadm（完成ip负载）充当负载均衡器
+	c. RealServer1 -- nginx服务器 -- web服务
+	d. RealServer2 -- nginx服务器 -- web服务
+	
+1.2 实验步骤
+	a. 本地安装ipvsadm工具，加载IPVS模块
+		$ sudo apt-get update # 更新源
+		$ sudo apt-get install ipvsadm # 安装ipvsadm工具
+		$ sudo ipvsdam -L # 尝试使用ipvsadm
+		
+	b. 通过docker创建三个container来模拟服务器池中的成员
+		$ docker run --privileged --name=LoadBalancer --tdi ubuntu
+		# 对应的调度器
+		$ docker run --privileged --name=RealServer1 --tdi ubuntu
+		对应的地址为 192.168.0.2
+		$ docker run --privileged --name=RealServer2 -- tdi ubuntu
+		对应的地址为 192.168.0.3
+		
+		docker run # 创建docker容器
+		--privileged # 赋予super权限
+		--name # 设定docker名称
+		--tdi分配tty，使之可以交互
+		ubuntu # 容器镜像
+		
+	c. 配置两台RealServer的环境
+		登入container
+		$ docker attach RealServer1
+		apt-get update
+		
+		安装vim与nginx工具
+		apt-get install vim -y
+		apt-get install nginx -y
+		service nginx start
+		
+		修改默认nginx页面（index.html)
+		vim /usr/share/nginx/html/index.html
+		
+		使用 Ctrl + p + q脱离当前环境的登录
+		exit会关闭服务器
+		
+		修改内核参数，一直arp
+		echo "1" > /proc/sys/net/ipv4/conf/lo/arp_ignore
+		echo "1" > /proc/sys/net/ipv4/conf/all/arp_ignore
+		
+		echo "2" > /proc/sys/net/ipv4/conf/lo/arp_announce
+		echo "2" > /proc/sys/net/ipv4/conf/all/arp_announce
+		
+		sysctl -p 使得上面的设置生效
+		
+		创建网卡别名并添加路由
+		# 配置虚拟ip
+		ifconfig lo:0 192.168.0.10 broadcast 192.168.0.10 netmast 255.255.255.255 up
+		# 添加路由
+		route add -host 192.168.0.10 dev lo:0
+		service networking restart
+		
+	d. 配置LoadBalancer负载均衡调度器
+		安装ipvsadm工具
+			apt-get update
+			apt-get install ipvsadm -y
+			ipvsadm -L
+		配置网卡别名
+			docker attach LoadBalancer
+			ifconfig eth0:0 192.168.0.10 netmask 255.255.255.0 up # 配置eth0的别名绑定vip
+			配置ipvsadm规则
+			使用ipvsadm设置ipvs规则
+			vip = 192.168.0.10:80
+			sudo ipvsadm -A -t vip:80 -s rr # 定义集群服务
+			sudo ipvsadm -a -t vip:80 -r rip -g # 添加realserver
+			-g 设置为dr模式
+			sudo ipvsadm -l # 查看ipvs定义的规则
+			参数说明：
+				-A： 添加一个新的集群服务
+				-t: 使用tcp协议
+				-s: 指定负载均衡调度算法
+				rr: 轮询算法
+				vip:80 定义集群服务ip地址和端口
+				
+				-a: 添加一个新的Realserver
+				-t: tcp协议
+				-r：指定realserver ip
+				-m: 定义为NAT
+		修改内核转发参数
+			配置ipvsadm规则
+	e. 测试实验结果
+		通过不断刷新VIP页面，查看内容的变化
+		F5
+	
+
