@@ -1,0 +1,11 @@
+---
+- hosts: test
+  
+  tasks:
+  
+    - name: test register
+      shell: echo $PATH
+      register: test
+      
+    - debug: msg={{test}}
+...
