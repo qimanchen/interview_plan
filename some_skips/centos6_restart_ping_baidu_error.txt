@@ -1,0 +1,11 @@
+# centos server 网络问题
+1. 目前每次重启server时，每次都会导致无法解析域名(无法ping通百度)
+	目前解决办法：
+		$ ifdown eth0 (对应着连接外网的那张网卡)
+		$ ifup eth0
+# 已找到问题的关键：
+	由于centos6中控制网络服务的xinetd的服务没有设置成开机自启
+	# 设置开机自启的方法有：
+		1. 将服务放入 /etc/rc.d/rc[0-6].d中
+		2. chkconfig --level 启动等级 service_name on|off
+	# 注意将对应的开机的其中等级确认

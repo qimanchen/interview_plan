@@ -1,0 +1,10 @@
+---
+# ansible-playbook *.yaml 执行一个配置命令
+- hosts: test
+  tasks:
+    - name: test condition
+      command: echo {{ item }}
+      with_items: [0, 2, 4, 6, 8, 10]
+      # 判断条件，条件为真则执行命令
+      when: item > 5
+...

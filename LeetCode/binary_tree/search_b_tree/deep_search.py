@@ -161,3 +161,18 @@ class Solution:
             node = resStack.pop()
             node = node.left
         return resList[::-1]
+		
+def DFS(root):
+	if root is None:
+		return
+	stack = []
+	res = []
+	stack.append(root)
+	while stack:
+		currentNode = stack.pop()
+		res.append(currentNode.val)
+		if currentNode.right:
+			stack.append(currentNode.right)
+		if currentNode.left:
+			stack.append(currentNode.left)
+	return res

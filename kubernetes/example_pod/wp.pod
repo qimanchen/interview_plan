@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: wp
+spec:
+  containers:
+  - name: wp
+    image: wordpress
+	resources:
+	  requests:
+	    memory: "64Mi"
+		# cpu仅支持1或者500m这种写法，500m = 0.5核
+		cpu: "250m"
+	  limits:
+	    memory: "120Mi"
+		cpu: "500m"

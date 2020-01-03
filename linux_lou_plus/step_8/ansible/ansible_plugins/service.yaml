@@ -1,0 +1,10 @@
+# service模块
+# 主要用于管理服务。使用 key=value 这种参数格式来书写。
+# 开启服务
+- name: make sure apache is running
+  service: name=httpd state=started
+  
+# 或者使用key:value参数的格式
+- service:
+    name: httpd
+    state: started

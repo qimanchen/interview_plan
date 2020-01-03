@@ -1,0 +1,28 @@
+# 在指定目录下创建一个文件，并赋予权限
+- name: create a file
+  file:
+    path: /home/shiyanlou/file
+    state: touch
+    owner: shiyanlou
+    mode: 'u+rw, g+rw'
+    
+# 复制一个文件到指定目录
+- name: copy a file
+  copy:
+    src: /etc/ansible/ansible.cfg
+    dest: /home/shiyanlou/file
+    
+# 安装一个软件包
+- hosts: test
+  sudo: yes
+  vars:
+    apt_packages_ca:
+      - apt-transport-https
+      - ca-certificates
+      - apparmor-utils
+  tasks:
+    - name: add CA certificates are installed.
+      apt:
+        name: "{{ item }}"
+        update_cache: yes
+      with_items: apt_packages_ca

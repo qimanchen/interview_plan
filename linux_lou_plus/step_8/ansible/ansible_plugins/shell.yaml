@@ -1,0 +1,7 @@
+# shell模块
+# 用法也很简单，就像直接输入执行命令一样
+
+- name: make install gucad
+  shell: ./configure --with-init-dir=/etc/init.d && make && make install && ldconfig && update-rc.d guacd defaults
+  args:
+    chdir: /home/ubuntu/src/guacamole-server-0.9.9/

@@ -1,0 +1,4 @@
+# ping 测试IP网络上主机的可用性/连接性
+# 向目标主机发送ICMP Echo,并等待响应，以确认主机的可用性
+
+# ping -c 2 2daygeek.com | head -2 | tail -1 | awk '{print $5}' | sed 's/[(:)]//g/

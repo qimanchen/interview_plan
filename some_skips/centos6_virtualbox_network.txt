@@ -1,0 +1,3 @@
+centos6网络问题 -- virtualbox -- 网卡mac要正确
+	1. 检查/etc/sysconfig/network-scripts/下对应的网卡的配置
+	2. dmesg | grep eth # 检查网络的设备好（mac和设备别名）

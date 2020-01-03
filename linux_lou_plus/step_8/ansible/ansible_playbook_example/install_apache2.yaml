@@ -1,0 +1,14 @@
+---
+- hosts: test
+  sudo: yes
+  tasks:
+    - name: "Install Apache"
+      apt:
+        name: apache2
+        state: present
+    - name: "Startup Apache"
+      service:
+        name: apache2
+        state: started
+        enabled: yes
+...

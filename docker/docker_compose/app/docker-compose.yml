@@ -1,0 +1,16 @@
+services:
+  # set redis service
+  redis:
+    image: redis:3.2
+  # set web service
+  web:
+    build:
+      context: /home/shiyanlou/app/web
+    # define apply
+    depends_on:
+    - redis
+    ports:
+    - 8001:80/tcp
+    volumes:
+    - /home/shiyanlou/app/web:/web:rw
+version: '3.0'

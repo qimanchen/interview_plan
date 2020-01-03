@@ -1,0 +1,94 @@
+acl "trusted" {
+              192.168.42.5; #ns1    信任的名单
+};
+options {
+    directory "/var/cache/bind";
+
+    // If there is a firewall between you and nameservers you want
+    // to talk to, you may need to fix the firewall to allow multiple
+    // ports to talk.  See http://www.kb.cert.org/vuls/id/800113
+
+    // If your ISP provided one or more IP addresses for stable 
+    // nameservers, you probably want to use them as forwarders.  
+    // Uncomment the following block, and insert the addresses replacing 
+    // the all-0's placeholder.
+
+        recursion  yes;                 # enables resursive queries
+        allow-recursion { trusted; };  # allows recursive queries from "trusted" clients
+        listen-on { 192.168.42.5;  };   # ns1 private IP address - listen on private network only
+        allow-transfer { none; };      # disable zone transfers by default
+
+        forwarders {
+                   114.114.114.114;        # 当本地的dns服务器中找不到记录时向上查询
+        };
+    //========================================================================
+    // If BIND logs error messages about the root key being expired,
+    // you will need to update your keys.  See https://www.isc.org/bind-keys
+    //========================================================================
+    dnssec-validation auto;
+
+    auth-nxdomain no;    # conform to RFC1035
+    listen-on-v6 { any; };
+};
+# 注意ip地址根据自己的ip地址填写
+
+# 配置文件格式
+声明 {
+    配置参数；
+    配置参数 {
+        子配置项；
+        子配置项；
+    }
+    .......;
+    .......;
+}
+
+声明参数的主要配置
+声明	作用
+options	配置服务的全局参数和一些其他配置项的默认值
+logging	服务日志相关信息配置
+zone	服务域的定义
+
+1. options配置
+	主要配置一些全局参数，监听端口，服务目录，保存文件的名称与路径
+	
+	named服务运行上的配置
+		配置项	作用
+		listen-on port	指定服务在 IPv4 上使用的端口
+		listen-on-v6 port	指定服务在 IPv6 使用的端口
+		directory	服务的工作目录
+		pid-file	运行服务产生的 pid 文件路径
+		recursion	在要求递归下，做递归查询回答查询请求
+		
+	控制命令 rndc 运行后产生文件的目录配置：
+		配置项	作用
+		dump-file	运行 rndc dumpdb 备份缓存资料保存的文件名与路径(rndc 是 named 提供的控制命令)
+		statistics-file	运行 rndc stats 统计信息保存的文件名
+		memstatistics-file	服务器输出的内存使用统计文件的路径名
+	
+	named 服务运行的安全问题
+		配置项	作用
+		allow-query	指定可以查询主解析记录的服务器地址
+		dnssec-enable	是否开启 DNS 安全模块
+		dnssec-validation	是否进行 DNS 安全确认
+		bindkeys-file	配置 DNS 安全模块所使用的密钥
+		managed-keys-directory	配置 DNS 安全模块管理密钥的目录
+		session-keyfile	更新策略的 key 文件名
+		# DNSSEC -- DNS Security Extension
+		
+2. logging的配置
+	主要配置日志的日志类别与输出通道，日志类别能够帮我们过滤出想要的部分日志，
+	通道指定我们日志输出的位置，通常分别使用 category、channel
+	
+		在 channel 中：
+			file：定义错误日志输出的文件名与目录
+			serverity：定义日志的级别
+			
+3. zone的配置
+	域的定义，配置对于请求不同域的处理类型
+	
+4. 其他声明配置
+	acl	定义访问控制列表，添加黑白名单
+	inclued	引入其他的配置文件
+	controls	配置一些常用的操作
+	view	定义视图

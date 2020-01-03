@@ -1,0 +1,17 @@
+# centos7 SELinux问题解决
+
+# 确认是否是SELinux的问题
+	setenforce 0
+	执行你错误的操作，看是否成功
+	如果成功，那么说明是这个的问题
+	setenforce 1
+	
+# 查看日志文件，看是具体的问题
+	vim /var/log/messages
+	or
+	grep sealert /var/log/messages | tail
+
+# 更具相应的提出方案进行解决
+
+# 别忘了更新SELinux的设置 -- 对应的工作目录
+	restorecon -Rv /worddict

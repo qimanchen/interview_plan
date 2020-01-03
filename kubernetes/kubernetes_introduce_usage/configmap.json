@@ -1,0 +1,12 @@
+{
+	"apiVersion": "v1",
+	"data": {
+		"a": "a",
+		"b": "b"
+	},
+	"kind": "ConfigMap",
+	"metadata": {
+		"name": "manman",
+		"namespace": "kube-public"
+	}
+}

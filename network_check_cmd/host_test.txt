@@ -1,0 +1,3 @@
+# host指令
+# 命令行程序，用于将名称转换为IP地址
+# host 2daygeek.com | grep "has address" | sed 's/has address/-/g'
