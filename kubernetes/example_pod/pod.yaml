@@ -1,0 +1,32 @@
+apiVersion: v1
+# 一般核心资源（namespace，pod，cm）都是v1
+
+
+kind: Pod
+# 资源类型，开头大写
+
+
+metadata:
+  name: myapp-pod
+  # 这个pod的名称
+  
+  
+  labels:
+    # pod的标签
+    app: myapp
+  # namespace -- pod是属于namespace，如果没写默认
+  # namespce: default
+  
+spec:
+  # pod的主要信息部分
+  
+  
+  containers:
+  # 一个列表，可以包含多个container
+  
+  - name: myapp-container
+    # 这个container的名字，一个pod下面的多个container名字不能冲突
+    image: busybox
+    # 这个container的镜像信息
+    command: ['sh', '-c', 'echo Hello Kubernetes! && sleep 3600']
+    # 启动命令

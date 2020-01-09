@@ -1,0 +1,8 @@
+apiVersion: v1
+data:
+  a: a
+  b: b
+kind: ConfigMap
+metadata:
+  name: manconfig
+  namespace: kube-public

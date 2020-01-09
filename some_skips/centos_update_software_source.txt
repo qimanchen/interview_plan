@@ -1,0 +1,8 @@
+# 更新centos的在线更新源
+1. 备份原始源
+mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.backup
+2. 替换更新源
+	wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.163.com/.help/CentOS6-Base-163.repo
+3. 更新缓存
+	yun clean all
+	yum makecache

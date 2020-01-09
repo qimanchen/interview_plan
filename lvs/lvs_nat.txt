@@ -1,0 +1,70 @@
+# lvs - linux虚拟服务器的vs/NAT的实验
+1.1 实验集群环境的搭建
+	a. load Balancer
+	b. 后端服务器集群
+
+整个集群系统的架构：
+	a. 宿主机环境，装有ipvsadm（完成ip负载）充当负载均衡器
+	b. 宿主机浏览器，充当客服端
+	c. RealServer1 -- nginx服务器 -- web服务
+	d. RealServer2 -- nginx服务器 -- web服务
+	
+1.2 实验步骤
+	a. 本地安装ipvsadm工具，加载IPVS模块
+		$ sudo apt-get update # 更新源
+		$ sudo apt-get install ipvsadm # 安装ipvsadm工具
+		$ sudo ipvsdam -L # 尝试使用ipvsadm
+	b. 通过docker创建两个container来模拟服务器池中的成员
+		$ docker run --privileged --name=RealServer1 --tdi ubuntu
+		对应的地址为 192.168.0.2
+		$ docker run --privileged --name=RealServer2 -- tdi ubuntu
+		对应的地址为 192.168.0.3
+		
+		docker run # 创建docker容器
+		--privileged # 赋予super权限
+		--name # 设定docker名称
+		--tdi分配tty，使之可以交互
+		ubuntu # 容器镜像
+		
+	c. 配置两台RealServer的环境
+		登入container
+		$ docker attach RealServer1
+		apt-get update
+		apt-get install vim -y
+		apt-get install nginx -y
+		service nginx start
+		vim /usr/share/nginx/html/index.html
+		
+		使用 Ctrl + p + q脱离当前环境的登录
+		exit会关闭服务器
+		安装vim与nginx工具
+		修改默认nginx页面（index.html)
+		
+	d. 配置负载均衡调度器
+		sudo service nginx stop # 关闭主机服务器，防止产生影响
+		VIP-- 为当前主机的位置
+		1. 开启LoadBalancer的内核路由转发
+			echo "1" > sudo tee /proc/sys/net/ipv4/ip_forward
+			cat /proc/sys/net/ipv4/ip_forward
+		2. 使用ipvsadm设置ipvs规则
+			sudo ipvsadm -A -t vip:80 -s rr # 定义集群服务
+			sudo ipvsadm -a -t vip:80 -r rip -m # 添加realserver
+			sudo ipvsadm -l # 查看ipvs定义的规则
+			参数说明：
+				-A： 添加一个新的集群服务
+				-t: 使用tcp协议
+				-s: 指定负载均衡调度算法
+				rr: 轮询算法
+				vip:80 定义集群服务ip地址和端口
+				
+				-a: 添加一个新的Realserver
+				-t: tcp协议
+				-r：指定realserver ip
+				-m: 定义为NAT模式
+		修改内核转发参数
+			配置ipvsadm规则
+	e. 测试实验结果
+		通过不断刷新VIP页面，查看内容的变化
+		F5
+	
+

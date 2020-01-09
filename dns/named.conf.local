@@ -1,0 +1,32 @@
+//
+// Do any local configuration here
+//
+
+// Consider adding the 1918 zones here, if they are not used in your
+// organization
+//include "/etc/bind/zones.rfc1918";
+
+zone "shiyanlou.example.com" {
+    type master;
+    file "/etc/bind/zones/db.shiyanlou.example.com"; # zone file path
+};
+
+zone "168.192.in-addr.arpa" {
+    type master;
+    file "/etc/bind/zones/db.192.168";  
+};
+
+# 反向区域名称以 168.192 开头，即 192.168 反转。
+
+# 在zone中主要的配置项
+	配置项	作用
+	type	配置域的类型可用的值为 hint、master、salve、forward
+		type4个值的含义
+			hint：当本地找不到解析时可查询根域名服务器
+			master：设置为主域名服务器
+			slave：设置为次域名服务器
+			forward：定义转发的域名服务器
+	file	配置定义域数据文件名
+	notify	更是数据之后时候通知其他服务器
+	allow-update	允许哪些机器更新域数据信息
+	allow-transfer	允许可以下载数据文件

@@ -1,0 +1,19 @@
+---
+# 表示一个或多个组或主机，多个主机用逗号隔开
+- hosts: test
+  # 表示用户名， sudo: yes -- 使用sudo权限
+  remote_user: root
+  # 变量
+  vars:
+  # 任务，从上到下，一个任务完成才可以开始另一个任务
+  # 任务必须有一个名称，同样任务出错了，会导致跳出执行
+  tasks:
+    - name: Install the package "bc"
+      apt:
+        name: bc
+        state: present
+  # 由通知者进行notify，不管有多少个通知者进行了notify，等到所有的task执行完成之后，handlers也只会被执行一次
+  # 同样是按照顺序执行
+  # 重启服务或触发系统的重启
+  handlers:
+...

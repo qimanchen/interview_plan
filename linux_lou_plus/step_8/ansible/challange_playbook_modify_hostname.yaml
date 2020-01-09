@@ -1,0 +1,46 @@
+# 实验步骤
+# 安装ansible
+$ sudo apt-get update
+$ sudo apt-get install software-properties-common
+$ sudo python3.4 /usr/bin/add-apt-repository ppa:ansible/ansible
+$ sudo apt-get update
+$ sudo apt-get install ansible
+# 验证是否安装成功
+$ ansible --version
+
+# 创建密钥
+$ ssh-keygen
+# 将密钥写入到认证文件中，实现无密码登录
+cat ~/.ssh/id_rsa.pub ~/.ssh/authorized_keys
+
+# 添加Invertory
+$ sudo vi /etc/ansible/hosts
+[product]
+docker1.shiyanlou.com ansible_host=127.0.0.1 ansible_ssh_user=shiyanlou ansible_ssh_private_key_file=/home/shiyanlou/.ssh/id_rsa
+
+# 关闭host key检查
+# 修改配置文件 -- 不要远程连接指纹确认互动
+打开 Ansible 配置文件 /etc/ansible/ansible.cfg，设置选项 host_key_checking 为 False。
+
+# 复制host文件
+cp /etc/hosts /home/shiyanlou/hosts
+
+# 编写playbook
+---
+- hosts:
+    - product
+  tasks:
+    - name: show value
+      debug: msg="My host alias is {{ inventory_hostname }} {{ ansible_ssh_host }} {{ ansible_nodename }}"
+    
+    - name: modify hostname
+      shell: echo "{{ inventory_hostname }}" | tee /etc/hostname
+      become: yes
+    - name: modify hosts
+      shell: sed -i "s/{{ ansible_nodename }}/{{ inventory_hostname }}/g" /home/shiyanlou/hosts
+      become: yes
+...
+
+
+# 执行playbook
+ansible-playbook /home/shiyanlou/modify_hostname.yml

@@ -64,3 +64,21 @@ class Solution:
 			# 更新当前层队列
 			queue = nextQueue
 		return resList
+		
+# 广度搜索
+# 利用队列，依次将根、左子树、右子树存入队列
+def BFS(root):
+	if root is None:
+		return
+	queue = [] # 队列保存结点
+	res = [] # 保存结点值
+	queue.append(root)
+	
+	while queue:
+		currentNode = queue.pop(0)
+		res.append(currentNode.val)
+		if currentNode.left:
+			queue.append(currentNode.left)
+		if currentNode.right:
+			queue.append(currentNode.right)
+	return res

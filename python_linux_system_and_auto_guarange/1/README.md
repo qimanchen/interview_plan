@@ -1,0 +1,2 @@
+介绍Python语言特性和应用场景
+为什么Python适合Linux系统管理

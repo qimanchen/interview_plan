@@ -1,0 +1,19 @@
+# 备份你的原镜像文件,出错后还可以恢复
+mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.backup
+# 下载新的CentOS-Base.repo到/etc/yum.repos.d/
+wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-6.repo
+ 
+yum makecache  # 生成缓存
+yum clean all  # 清除缓存
+chkconfig NetworkManager off
+service NetworkManager stop
+
+
+# centos6/7添加epol源
+wget -O /etc/yum.repos.d/epel.repo http://mirrors.aliyun.com/repo/epel-6.repo
+yum repolist  # 验证是否成功
+
+
+# Centos7同理
+wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo
+wget -O /etc/yum.repos.d/epel.repo http://mirrors.aliyun.com/repo/epel-7.repo

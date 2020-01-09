@@ -1,0 +1,42 @@
+---
+- hosts: test
+  sudo: yes
+  vars:
+    apt_packages_ca:
+      - apt-transport-https
+      - ca-certificates
+      
+      
+  tasks:
+    - name: add docker source list file for install docker
+      file:
+        path: /etc/apt/source.list.d/docker.list
+        state: touch
+        owner: root
+        mode: 'u+r,g+rw'
+        
+    - name: write deb url of docker to docker.list
+      blockinfile:
+        dest: /etc/apt/sources.list.d/docker.list
+        marker: ""
+        block: |
+          deb https://apt.dockerproject.org/repo ubuntu-trusty main
+          
+    - name: add CA certificates and ensure installed
+      apt:
+        name: "{{ item }}"
+        update_cache: yes
+      with_items: "{{ apt_packages_ca }}"
+      
+    - name: add apt-key of dockers
+      apt_key:
+        keyserver: p80.pool.sks-keyservers.net
+        id: 58118E89F3A912897C070ADBF76221572C52609D
+        
+    - name: install docker-engine
+      apt:
+        name: docker-engine
+        state: latest
+        force: yes
+        
+...

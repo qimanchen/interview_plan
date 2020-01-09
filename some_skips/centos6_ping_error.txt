@@ -1,0 +1,8 @@
+# centos6重新启动后发现ping无法解析www.baidu.com
+
+1. 尝试ping网络，如果ping不通
+2. 重启网卡 -- 对外访问的网卡
+	ifdown eth0
+	ifup eth0
+
+# 20191212出现每次开机都无法解析域名

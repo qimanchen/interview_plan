@@ -1,0 +1,34 @@
+Create a RomanNumerals class that can convert a roman numeral to and from an integer value. It should follow the API demonstrated in the examples below. Multiple roman numeral values will be tested for each helper method.
+
+Modern Roman numerals are written by expressing each digit separately starting with the left most digit and skipping any digit with a value of zero. In Roman numerals 1990 is rendered: 1000=M, 900=CM, 90=XC; resulting in MCMXC. 2008 is written as 2000=MM, 8=VIII; or MMVIII. 1666 uses each Roman symbol in descending order: MDCLXVI.
+
+Examples
+RomanNumerals.to_roman(1000) # should return 'M'
+RomanNumerals.from_roman('M') # should return 1000
+
+Help:
+| Symbol | Value | |----------------| | I | 1 | | V | 5 | | X | 10 | | L | 50 | | C | 100 | | D | 500 | | M | 1000 |
+
+# solution
+class RomanNumerals(object):
+    _romanToNum = {'M':1000, 'D':500, 'C':100, 'L':50, 'X':10, 'V':5, 'I':1}
+
+    @classmethod
+    def to_roman(cls, value):
+        mNum = value // 1000
+        dNum = value % 1000 // 500
+        cNum = value % 500 // 100
+        lNum = value % 100 // 50
+        xNum = value % 50 // 10
+        vNum = value % 10 // 5
+        iNum = value  % 5 // 1
+        result =  mNum * "M" + 'D' * dNum + 'C' * cNum + 'L' * lNum + 'X' * xNum + 'V' * vNum + 'I' * iNum
+        return result.replace('DCCCC','CM').replace('CCCC', 'CD').replace('LXXXX', 'XC').replace('XXXX','XL').replace('IIII','IV')
+        
+    @classmethod
+    def from_roman(cls, romanString):
+        romanString = romanString.replace('CM','DCCCC').replace('CD', 'CCCC').replace('XC', 'LXXXX').replace('XL','XXXX').replace('IV','IIII')
+        value = 0
+        for char in romanString:
+            value += cls._romanToNum[char]
+        return value

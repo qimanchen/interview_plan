@@ -1,0 +1,31 @@
+# centos7网卡设置问题
+
+# 查找网卡的UUID
+$ nmcli con show
+
+1. $ vim /etc/sysconfig/network-scripts/ifcfg-enp0s8 (NCI Name)
+	配置：
+		DEVICE="enp0s8"
+		NAME="enp0s8"
+		# MAC
+		HWADDR="08:00:27:02:a5:dc"
+		# 开机自启
+		ONBOOT="yes"
+		# DHCP是否开启
+		BOOTPROTO="yes"
+		# 设置IP
+		IPADDR=192.168.56.60
+		GATEWAY=192.168.56.1
+		# 网卡UUID
+		UUID="1f0cae07-8008-3bbc-8a56-7a82fc6c004d"
+		
+2. $ ifconfig enp0s8 down
+	$ ifconfig enp0s8 up
+	# 重启网卡
+	或：重启服务
+	$ systemctl restart network
+	# 注意查看网卡的状态
+	$ nmcli con show
+	
+3. $ systemctl status network.service # 查看网卡状态
+	或：$ vim /var/log/messages # 查看日志

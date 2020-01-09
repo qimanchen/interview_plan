@@ -1,0 +1,22 @@
+# 添加多个用户
+- name: add several users
+  user:
+    # items用于放置需要读取的变量的位置
+    name: "{{ item }}"
+    state: present
+    groups: "shiyanlou"
+  # 用来指定需要读取出来的值
+  with_items:
+    - testuser1
+    - testuser2
+    
+# 嵌套循环
+- name: give users access to multiple databases
+  mysql_user:
+  name: "{{ item[0] }}"
+  priv: "{{ item[1] }}.*:ALL"
+  append_privs: yes
+  password: "shiyanlou"
+  with_nested:
+    - [ 'Jay', 'Chou' ]
+    - [ 'studentdb', 'coursedb', 'classdb' ]
