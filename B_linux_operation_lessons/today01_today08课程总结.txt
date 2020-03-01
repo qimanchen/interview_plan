@@ -1,0 +1,396 @@
+# today01-today08课程总结
+#1.系统硬件
+	- 服务器种类
+		硬件服务器
+			机架服务器 1U 2U 4U 8U
+				unit -- 服务器高度 1.75英寸==4.45cm
+			刀片式服务器
+			塔式服务器
+		虚拟服务器 （云服务器）
+			阿里云
+			亚马逊AWS
+	- 硬件组成
+		CPU
+			cpu路数 服务器中有多少个cpu
+			cpu核数 并行处理能力
+			类型
+			主频
+			数量
+			cpu主频越高，缓存数量越大，则服务器的运算速度越快，性能越大
+		CPU风扇
+		磁盘
+			永久存储
+			磁盘的读取/写入速率决定服务器的处理速度和对客户的响应速度
+			支持热拔插
+			部门级，SAS RAID
+			入门，SATA RAID
+			- 为什么磁盘存储效率低
+				1. 磁盘的工作方式
+				2. 磁盘I/O消耗
+			- 磁盘的接口类型（影响数据存储效率）
+				存储效率从低到高
+					IDE
+					SATA
+					SCSI
+					SAS
+					SSD（固态硬盘）
+			- 服务器磁盘的特点
+				多块磁盘整合
+					- 优势
+						增加数据存储量
+						增加数据安全性（容灾备份）
+						增加数据存储效率
+					- 工具Raid卡，磁盘阵列卡
+						LVM技术（参照鸟哥linux私饭菜）
+						种类
+							raid0
+								- 每个磁盘存储50%数据
+									存储效率高
+									容灾性低
+							raid1
+								- 每个磁盘都保存一份
+									效率低
+							raid5
+							raid6
+							raid01
+							raid10
+			- 磁盘存储数据量单位
+				1024 换算方式 -- 计算机存储
+				1000 换算方式 -- 工业生产
+		内存
+			临时存储，掉电丢失
+			存储/读取速度效率高
+			缓冲 将数据临时存储到内存中的过程，写缓冲
+				缓和冲击
+				- 引入缓冲的原因
+					高速设备与低速设备不匹配
+				- 作用
+					1. 设备间速度匹配
+					2. 减少读取次数
+				- 类型
+					全缓冲 写满再I/O
+					行缓冲 遇到换行符就I/O
+					不带缓冲 遇到就I/O
+				- 缓冲刷新
+					缓冲区满
+					关闭文件
+			缓存 将数据从临时存储中存储到磁盘中，读缓存
+				加快取用速度
+				分类
+					- CPU的cache
+						解决速度不匹配，
+						cpu的cache越大，级数越多，cpu的访问速度越快
+					- 磁盘的cache
+						解决总线接口的高速需求和读写磁盘的矛盾
+						对某些扇区的反复读取
+					- 浏览器的缓冲
+						节约网络资源，加速浏览
+						cache是短时间保存
+			针对数据库服务，代理服务，web服务等网络服务，内存数量尤为重要
+		主板/芯片组
+			- 厂家
+				Inter
+				超威
+				泰安
+		显卡
+		声卡
+		电源
+			备用电源
+			ups不间断电源
+		显示器
+		网卡
+			千兆网卡
+		远程管理卡
+			- 作用
+				控制远程开关机
+				进行远程安装系统
+					KICKSTART
+			- 种类
+				集成，仅支持远程开关机
+				外置，远程安装系统和配置raid卡
+			- 不同主板，远程管理卡的名称不同
+				dell - idrac
+				HP - ilo
+				IBM - RSA
+		冗余
+			磁盘
+			部件
+			热拔插
+		可拓展性
+	- 服务器布局
+		合理布线，标签
+	- 硬件服务器的选择
+		- 采购
+			1. 对厂商和型号进行了解
+				Dell 
+				联想
+				浪潮
+				华为
+			2. 出具服务器购买方案
+				最少三个
+				方案排好顺序（推荐顺序）
+			3. 寻找服务器集成厂商询问相关资讯
+	# 企业存储处理方案
+		- 大型企业存储方案
+			存储数据 -- 内存中 -- 存储磁盘中
+			读取数据 -- 磁盘数据 -- 内存中
+					 -- 内存中读取数据
+		- 中小型企业
+			存储数据 -- 存储磁盘中
+			读取数据 -- 磁盘读取 -- 内存中
+					 -- 内存中读取
+# 2. Linux系统和运维常识
+	- 系统运维工程师职责
+		保证数据不丢失
+		保证服务器的运行
+		保证用户访问体验
+	- 运维工作流程
+		1. 准备/检查好环境
+		2. 进行操作前的备份
+		3. 进行配置后，保存配置
+		4. 配置完成后检查
+		5. 编写项目文档
+	- 系统概念
+		- 操作系统，管理硬件的软件，保证人机交互
+		- 操作系统的组成
+			内核+解释器（bash/shell)+软件应用程序
+	- Linux系统发展
+		GNU项目 开发出类似Unix的系统
+		GPL 通用许可协议
+			1. 所有软件代码信息必须是开源的
+			2. 可以对软件代码进行修改，代码修改信息需要发布出来
+	- Linux系统发行版本
+		Linux 桌面 ubuntu
+		Linux 服务器 Redhat
+		Centos 免费
+		Debian/FressBsa 金融，游戏
+		SUSE 网络服务
+		
+# 2. 虚拟机
+	- 安装
+		1. 虚拟环境和网络配置（虚拟机软件设置）
+		注意主机是否允许虚拟化，BIOS设置（FIO）
+# 3. linux系统安装及相关配置
+	- 安装过程
+		1. 选择引导部分，troubleshooting排错
+			由于centos7默认系统网卡名称为ens*
+			- 跳帧网卡名称
+				tab，在行尾输入（ctrl+e）net.ifnames=0 biosdevname=0
+		2. 对系统语言设置
+			English（United Status）
+		3. 对系统的一些设置
+			- 网络，ip，dns，gateway
+			- 系统分区
+				种类
+					- 通用分区（分成三个区/ /boot swap
+					- 数据重要性来分 增加/data
+					- 灵活分区，除上面一些分区外，保留一部分容量
+			- 系统安全配置
+				kdump 记录主机错误信息记录 关闭
+				security policy 关闭
+			- 系统时区设置
+			- 系统软件包的安装
+				最小化安装，1236
+			- 创建系统用户
+				系统管理用户
+				普通用户
+	- 系统中的网络配置
+		- 网络检查
+			ip a 查看网卡信息
+			ping www.baidu.com 测试网络连通性
+		- 网络不通原因
+			网卡地址和虚拟主机网卡不统一
+			网卡和dsn信息不正确（一般是这个）
+		- 修改网络配置
+			nmtui 图形界面修改网卡配置
+			网卡主要包含
+				- Ip地址 标识
+				- 子网掩码，局域网中多少个主机
+				- 网关地址 访问其他网段的接口
+			配置好后使用systemctl restart network
+				
+# 4. 远程连接工具
+	- 远程控制
+		向日葵
+	- 远程shell
+		xshell - 保存连接sesions文件
+		scureCRT
+		putty 功能简单
+# 5. 虚拟机连接及使用排错放方法
+	- 虚拟机使用
+		1. 不可多次启动
+		2. 关机选择挂起虚拟机
+		3. 虚拟主机快照
+		4. 虚拟主机删除 -- 要删除配置文件
+	- 虚拟软件网络配置（虚拟软件网络模式）
+		分类
+			- NAT， 虚拟主机和宿主机网络信息不一致
+			- 桥接，需要占用实际局域网中的ip
+			- 仅主机，安全
+	- 远程连接排错步骤
+		1. 网络连通性
+			ping
+		2. 网络访问配置（策略）
+		3. 网络服务是否开启
+			telnet ip:port
+
+6. linux系统运行相关命令
+	- 系统关机
+		shutdown -c 取消关机
+		shutdown -h time message 短时间内关机
+		
+		halt
+		reboot 重启
+		poweroff 断电
+7. 系统文件操作，目录切换，文件编辑
+	- 文件信息查看
+		ls 显示该目录中包含的文件及目录（隐藏文件除外）
+		ls -d 只显示目录
+	- 创建目录
+		mkdir dict1 创建一个新的目录
+		mkdir -p dict1/dict2/dict3 多级创建
+	- 切换目录
+		cd /root
+	- 查看当前所在目录
+		pwd
+	- 查看命令帮助信息
+		man ls
+	- 创建空文件
+		touch new.txt
+	- 编辑文件
+		- 使用vi直接编辑
+		- 使用echo或cat进行编辑（添加内容）
+	- 查看文件内容
+		cat filename
+	- 复制
+		cp 
+		\cp -r 强制复制
+	- 移动目录或文件
+		mv
+		同级目录下移动 -- 重命名
+	- 重定向符号
+		> 覆盖
+		>> 追加
+8. 操作系统目录结构
+	- Linux下一切从根开始
+	- Linux系统的挂载过程
+		1. 确定需要挂载的存储设备
+		2. 将设备间进行挂载 -- 这样才能看到该设备中的内容
+			mount 挂载设备文件信息 挂载点（空目录）
+			- 非空目录，挂载后会导致目录中原来的内容看不到
+		3. 卸载
+			umount 挂载点
+	- 系统的基础目录结构
+		FHS linux目录结构规范
+		基本目录组成
+			/bin -> /usr/bin (centos7) 命令，二进制文件存放目录
+			/sbin -- 只用root用户可以使用的命令
+			/boot -- 系统启动引导程序+系统内核
+			/dev -- 设备 光驱 磁盘
+			/etc -- 配置文件目录
+				- /etc/sysconfig/network-scripts/ifcfg-eth0 网卡配置文件
+					TYPE=Ethernet 指定网络类型
+					BOOTPROTO=none/dhcp 网络启动协议
+					NAME=eth0 主机网卡名称
+					DEVICE=eth0 设备名称
+						ps：上面这两个名称必须一致
+					ONBOOT=yes 设置网卡是否开启
+					IPADDR 静态配置ip
+					PREFIX=24 定义网络中有多少主机
+					GATEWAY 不同网域之间通信的接口
+					DNS1 别名/域名解析
+					ps: 配置完，需要重启网卡
+				- /etc/resolv.conf dns服务器指定
+					nameserver 114.114.114.114
+				- 主机名称
+					centos6
+						/etc/sysconfig/network
+						- 永久修改
+							vi /etc/sysconfig/network
+					centos7
+						/etc/hostname
+						- 永久修改
+							hostnamectl set-hostname newhostname
+					- 查看
+						hostname
+					- 临时修改
+						hostname newhostname
+				- /etc/hosts 名称 ip解析映射文件
+					windows中 c:\Windows\System32\drivers\etc\hosts
+				- /etc/fstab 系统磁盘挂载配置
+					UUID=2653fb0a-af55-432d-a5c0-771b16dcc70a	/	xfs	defaults  0 0
+					/dev/cdrom	/mnt	iso9660	defaults	0	0
+				- /etc/rc.local -> /etc/rc.d/rc.local(centos7)
+					开机后执行的命令
+					ps: 该文件必须拥有可执行权限
+				- /etc/redhat-release 查看系统版本
+				- /etc/inittab 系统开启运行级别设置
+				- /etc/profile 系统登录后终端变量（环境变量设置）
+				- /etc/bashrc == /etc/bashrc
+				- /etc/motd 用户登录后的提示信息
+				- /etc/issue 用户登录前的提示信息
+					>/etc/issue 清空文件
+				- /etc/yum.repos.d/ yum源配置目录
+			/home -- 普通用户家目录
+				~/.bashrc == ~/.bash_profile
+			/root -- root用户家目录
+			/lib
+			/lib64 -- 库文件存放目录
+			/lost_found -- 临时存放文件系统
+			/mnt -- 临时挂载点目录
+			/opt -- 第三方软件安装
+			/proc -- 虚拟目录，显示内存信息（进程 服务信息 硬件）
+				- /proc/cpuinfo cpu信息 lscpu
+				- /proc/meminfo 内存信息 free -h
+				- /proc/mounts 磁盘信息 df -h
+				- /proc/loadavg 负载信息 w
+			/srv
+			/sys 虚拟目录，内存的信息
+			/tmp 临时文件的存放目录
+			/usr 存放程序的目录
+				- /usr/local 程序软件安装
+			/var 经常变化的目录，系统日志，相关服务的文件
+				/var/log 日志
+					message	服务，系统运行 错误信息
+					secure 登录信息
+9.	系统运行级别
+	总共7个级别
+	- runlevel 参看当前系统运行级别
+	- 切换运行级别
+		- init n 切换运行级别（仅限于centos6）
+		- centos6
+			vi /etc/inittab
+		- centos7
+			systemctl get-default 获取当前运行级别
+			systemctl set-default graph.target 切换到图形界面
+			ls -l /usr/lib/systemd/system/runlevel*target 存放着相应的运行级别
+	- 分类
+		centos6
+			00 系统关机
+			01 单用户模式
+			02 多用户模式，无网络
+			03 多用户模式，有网络
+			04 预留
+			05 图形界面
+			06 reboot
+		centos7
+			00 poweroff.target
+			01 rescue.target
+				修改root密码
+			02 multi-usr.target
+			03
+			04
+			05 graphical.target
+			06 reboot.target
+10. 系统软件安装
+	- yum 安装
+		1. yum源配置 /etc/yum.repos.d/
+			- Centos-Base.repo 标准软件源
+			- epol.repo 第三方软件源
+		2. 命令
+			yum install software_name
+			yum install -y software_name 自动确认
+		3. 安装排错
+			a. 能不能访问外网（ip，域名）
+			b. 检查是否已经进程在安装
+			c. yum源出现问题

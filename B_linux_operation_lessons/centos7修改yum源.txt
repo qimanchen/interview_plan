@@ -1,0 +1,15 @@
+# centos7 yum源的优化--修改默认源
+	- 操作系统优化 -- yum下载源优化
+		yum优势：简单快捷
+		1. 不需要到官方网站单独下载软件
+		2. 可以解决软件的依赖关系
+		- yum优化方法
+			ps：yum源的寻找，可以查找阿里源，网易源，清华源等
+			1. 优化基础的yum源文件
+				mirror.aliyun.com
+				CentOS7-Base.repo
+				wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo
+			2. 优化扩展的yum源文件
+				wget -O /etc/yum.repos.d/epel.repo http://mirrors.aliyun.com/repo/epel-7.repo
+			检查可用yum源的可用信息 yum repolist
+			yum install -y cowsay

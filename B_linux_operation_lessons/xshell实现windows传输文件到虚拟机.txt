@@ -1,0 +1,4 @@
+# windows与虚拟机之间直接传送文件
+	1. 在虚拟主机上安装软件
+		yum install -y lrzsz
+	2. 在windows下，直接找到要传送的文件，拖拽到xshell连接端口即可

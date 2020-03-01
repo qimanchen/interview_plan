@@ -1,0 +1,31 @@
+# centos修改root密码
+# centos6
+	1. 重启服务器，并进入开选项，按e进入内核编辑模式
+	2. 进入内核编辑模式时，在内核最后一行加入l或single，回车退出内核编辑模式
+	3. 再次进入开机选项，选择内核，按b进入单用户模式
+	4. password root重置密码
+	5. reboot重启
+	
+# centos7
+	方法1：
+		1. 进入开机选项，按e进入内核编辑模式，在linux16 最后添加 "rd.break",ctrl+x开机
+		2. mount -o remount,rw /sysroot 挂载临时根目录
+		3. chroot /sysroot 临时根目录
+		4. echo "your_root_new_pw" | passwd --stdin root
+		a.
+			5. touch /.autorelabel selinux安全文本 这个速度比较慢
+			6. reboot
+		b.
+			5. vi /etc/selinux/config 修改SELinux类型为permissive
+			6. reboot
+			7. sudo restorecon -Rv /etc
+			8. vi /etc/selinux/config 修改SELinux类型为enforcing
+			9. setenforce 1
+		
+	方法2：
+		1. 进入开机选项，按e进入内核编辑模式，在linux16 最后添加 "init=/bin/sh",ctrl+x开机
+		2. mount -o remount,rw /
+		3. echo "your_root_new_pw" | passwd --stdin root
+		4. touch /.autorelabel 重新读取selinux文档认证信息
+		5. exec /sbin/init	重启系统
+		

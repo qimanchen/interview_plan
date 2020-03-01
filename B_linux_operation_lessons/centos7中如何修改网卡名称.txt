@@ -1,0 +1,12 @@
+# 如何在系统中修改网卡名称
+	a 安装系统时，菜单界面 -- install centos7 -- tab -- net.ifnames=0 biosdevname=0
+	b 安装系统后
+		- 编辑网卡配置文件中的网卡名
+			vim /etc/sysconfig/network-scripts/ifcfg-ens33
+				NAME=eth0
+				DEVICE=eth0
+		- 修改网卡名规则内核文件
+			/etc/default/grub ->
+				GRUB_CMDLINE_LINUX="biosdevname=0 net.ifnames=0 rhgb quiet"
+		- 使得系统重新加载grub配置文件
+			grub2-mkconfig -o /boot/grub2/grub.cfg

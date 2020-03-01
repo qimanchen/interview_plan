@@ -1,0 +1,414 @@
+# linux中常用系统命令
+1.	mount	对存储设备进行挂载
+		mount	存储设备文件	挂载点
+	umount	对存储设备进行卸载
+		umount	挂载点
+2.	mv	移动剪切文件/目录
+		mv test.text ../	将文件移动到上一级目录
+		mv test.text man.txt	在同级目录中移动，作用为重命名
+3.	rm	删除数据命令
+		rm -rm	递归删除数据
+		rm -f/\rm	强制删除数据，不需要进行确认
+4.	cp	复制文件或目录数据到指定目录中
+		cp -r	递归复制目录数据
+		\cp	强制覆盖数据
+		cp source dest	dest为目录最好后面加"/"，防止目标目录不存在而直接重命名了
+		find /root/oldboy -type f -name "*.txt" | xargs cp -t /tmp
+			-t 指定复制到的目录
+5.	cat	查看文件内容信息
+	cat -n 显示内容行号信息
+6.	echo	将信息打印出来
+7.	hostname	显示或修改主机名称
+		hostname	显示
+		hostname newname	修改主机名
+8.	hostnamectl	修改临时名称，并修改配置文件
+		hostnamectl set-hostname newname
+9.	blkid 	查看设备UUID
+10.	df	查看磁盘挂载情况/查看磁盘使用情况
+	df -h 以人类可读的方式
+	df -i 查看inode使用情况
+	df 查看block使用情况
+11.	systemctl 操作系统服务
+		systemctl start 服务	启动服务
+		systemctl restart 服务	重启服务
+		systemctl stop 服务	关闭服务
+		systemctl disable 服务	关闭开机自启
+		systemctl enable 服务	开机自启
+		systemctl get-default	获取系统默认的运行级别
+		systemctl set-default target	设置系统默认运行级别
+		systemctl is-active firewalld 服务是否在运行
+		systemctl is-enable firewalld 服务是否开机运行
+12. runlevel 查看系统运行级别
+13.	init	切换运行级别
+14.	source 	让系统立即加载文件配置信息
+	source /etc/profiel
+	/etc/bashrc
+	~/.bashrc
+	~/.bashrc_profile
+	/etc/locale.conf
+	/etc/sysconfig/i18n #centos6
+15.	which 查看命令所在位置
+		which command
+16.	export	定义环境变量
+		export $PATH
+17.	alias	查看或设置命令别名
+		alias 查看系统别名
+		alias ll='ls -l'
+18.	unalias	取消别名
+		unalias ll
+19. type command 检查某个命令是否为内置命令
+20.	help 查看系统中所有的内置命令
+21.	ls 显示目录中的包含的数据文件或目录
+		ls -a 查看所有的文件
+		ls -l 查看文件详细信息
+		ls -d 查看目录信息，只显示当前目录
+		ls -ltr 按时间信息，最后一行为最新（逆序）
+		ls -lh 显示的数据大小，以人类可读的方式显示
+		ls -li 显示出数据信息的inode
+22.	yum 网络安装软件
+	yum install -y 软件名称
+	yum install vim
+	yum repolist 查看yum源信息
+	yum list 查看所有软件列表（已安装或未安装）
+	yum grouplist -- 可以安装和已安装的软件包组
+	yum groupinstall -y 软件包组 安装软件包组
+	yum --help -help --h -h 查看yum参数帮助信息
+	yum provides locate 查看某个命令属于那个安装包
+	
+	- 如何确认软件是否安装
+		a 重新再安装一遍
+		b 利用rpm命令可以管理软件是否已经安装
+			rpm -qa cowsay 查询系统安装的所有的软件中是否有该软件
+			rpm -ql cowsay 列出被安装软件的相关文档
+			PS:有些命令名称和软件包的名称是不相同的
+			
+			which 命令
+			rpm -qf 文件(绝对路径) 查看系统中的文件属于哪个安装包
+			rpm -qf `which ssh`
+		- rpm 安装软件
+			默认安装路径 /var/lib/rpm
+			rpm -i **.rpm
+			rpm -ivh **.rpm 显示详细安装信息
+			rpm -ivh --prefix 新的安装路径 **.rpm
+		- rpm 升级
+			rpm -Uvh 没安装的直接安装，安装的更新
+			rpm -Fvh 只对安装的更新
+		- rpm 查询
+			查询/var/lib/rpm中的资料库
+			rpm -qa 已安装的软件
+			rpm -qf 存在系统的某个文档（绝对路径）
+			rpm -qc 已安装的软件 /etc下的相关文件
+			rpm -qi 已安装软件名称 查看该软件详细信息
+			rpm -qR 已安装的软件 软件依赖
+			rpm -qp(icdlR) 找到rpm包的信息（未安装）
+		- rpm 验证
+			rpm -Va 系统上所有被修改的文件
+			rpm -V 已安装软件名称 该软件被更动档案
+		- rpm 数字证书
+			rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7 安装数字证书
+		- rpm 反安装
+			1. 找出相关软件
+				rpm -qa | grep pam
+			2. 先移除依赖此软件的软件
+				rpm -e pam-devel
+			- 若/var/lib/rpm文档破损
+				rpm --rebuilddb 重建数据库
+		- yum卸载
+			yum remove pam-devel
+		补充：linux和windows软件安装程序区别
+			xxx.exe -- windows 安装
+			xxx.rpm -- centos
+23.	ps 查看系统进程信息
+	ps -ef 查看所有详细的信息
+	
+24.	tail 查看文件的末尾几行行内容
+	默认查看10行
+	tail -6 查看6行
+	tail -f 动态查看
+25.	head 查看文件前几行内容（默认10行）
+	head -5 查看文件前5行
+26.	kill 杀死进程
+	kill pid
+	kill -9 pid 强制杀死进程
+27.	free 查看内存容量信息
+	free -h 以人类可读的方式（avaliable）
+28.	lscpu	查看cpu信息
+29.	w 查看用户登录信息/负载
+30.	useradd	创建用户（用户管理）
+	useradd 用户名
+31.	passwd	设置用户密码
+	passwd 用户名 指定用户修改密码
+	passwd	修改root的密码
+	echo "password" | passwd --stdin 修改密码
+	# echo "username:password" | chpasswd
+32.	su	切换用户
+	su - 用户名称
+33.	id	检查用户是否存在
+	id 用户名
+34.	whoami	确认用户身份
+	
+35.	rpm 管理软件包
+		rpm -qa 软件名称 查看软件包是否安装成功
+		rpm -ql 软件名称 查看软件中有哪些内容
+		rpm -qf 文件名称（绝对路径） 查看该文件属于那个软件包
+36.	localectl 设置字符集(centos7)
+		localectl set-locale zh_CN.UTF-8
+37.	less/more 逐行或逐页查看文件信息
+38.	whereis 查看命令所在路径以及命令相关手册路径
+39.	locate 查看文件所在路径信息
+	updatedb 更新文件所在路径的索引数据库表
+40.	file 查看文件的类型
+	file 文件信息
+41. stat	查看数据显示详细属性信息
+	stat file.txt
+42.	xargs	分组命令 按照分组显示
+	xargs -n1 < 文件
+	find /root/oldboy -type f -name "*.txt" | xargs -i cp {} /tmp
+		-i 指定替换字符
+	
+	总结 <
+		tr xx <
+		xargs <
+43.	tree	显示目录结构树
+	tree -L 1 
+	tree -d 只显示目录
+44.	tar	压缩数据命令
+		tar [-z|j|-J] [cv] [-f 待建立的压缩文件名] filename... 打包并压缩
+			-z	gzip	*.tar.gz
+			-j	bzip2	*.tar.bz2
+			-J	xz		*.tar.xz
+		tar [-z|j|-J] [tv] [-f 待建立的压缩文件名] filename... 查看压缩档
+		tar [-z|j|-J] [xv] [-f 待建立的压缩文件名] filename... 解压
+			-C 在指定目录中解压
+			-p(小写) 保留备份数据的原本权限与属性
+			-P(大写) 保留绝对路径
+			--exclude=FILE 排除file文件不要打包
+		-- 仅从压缩文件中解压出单一文件
+			1. 先找到要解压的文件
+				tar -tvf /root/oldboy.tar.bz2 | grep 'shadow'
+			2. 解压
+				tar -jxvf 打包文件.tar.bz2 待解压文件（与上面找到的文件名相同）
+				tar -jxvf -f /root/etc.tar.bz2 etc/shadow
+		- 压缩比某个文件新的文件
+			--newer 包括mtime和ctime
+			--newer-mtime
+			tar -jcvf /root/etc.newer.then.passwd.tar.bz2 --newer-mtime="2015/06/17" /etc/*
+		- tar使用管道
+			tar -cvf - /etc | tar -xvf - 可以用来复制文件到某个目录目录中
+		- selinux
+			三种方法
+				- 建立/.autorelabel 重启
+				- 复原系统后，restorecon -Rv /etc
+				- vim /etc/selinux/config -- permissive
+		tar -xvf *.tar.gz -C 解压到指定目录
+		--exclude
+		--exclude-from
+45.	date	查看时间信息和修改时间信息
+	date "+%F_%T"
+	date -s 设置系统时间
+	date -d 显示过去或将来的时间
+	时间相关的命令 date
+		01. 查看时间信息
+			date
+		02. 调整时间信息格式
+			date +%F-%T
+				2020-02-24-11:10:35
+			date "+%F %T"
+				2020-02-24 11:11:05
+			date "+%y-%m-%d %H:%M:%S"
+				20-02-24 11:12:26
+			cp oldboy.log oldboy.log-$(date "+%F-%T")
+			date "+%Y%m%d" -d "+1day"
+		03. 如何实际修改系统时间
+			date -s "2020-04-17"
+			date -s "2020/04/17 14:00"
+		04. 修改几天后的时间
+			- 显示将来的时间
+			date +%F -d "+1day" 后一天
+			date +%F -d "2day"
+			- 显示历史信息
+			date +%F -d "-1day" 前一天
+			date +%F -d "1 day ago" 前一天
+			- 系统自动的备份数据 00:00
+				cp /oldboy/oldboy.log /log/oldboy.log.$(date +%F)
+				调整 备份前一天的数据
+					cp /oldboy/oldboy.log /log/oldboy.log.$(date +%F -d "-1day")
+		05. 系统时间同步
+			yum install -y ntpdate
+			[root@qiman ~]# ntpdate ntp1.aliyun.com
+				24 Feb 17:53:20 ntpdate[17256]: step time server 120.25.115.20 offset 23065.018689 se
+46.	ln	创建链接文件
+	ln  硬
+	ln -s 软
+47.	wc	统计命令
+	wc -l 统计有多少行
+		
+# 高级命令 4剑客
+	1. grep 对信息进行过滤筛选
+		grep -B n	显示找到当前行所在行的前几行内容
+		grep -A n	显示找到当前行所在行的后几行内容
+		grep -C n	显示找到当前行所在行的前后几行内容
+		grep -c		显示所查找的内容的总行数
+		grep -P "^m.*?o" test.txt 关闭贪婪
+	2. sed
+			sed "/oldboy/p" test.txt 把原有的内容也显示
+			sed -n "/oldboy/p" test.txt 只显示过滤内容
+				p print 将过滤信息输出
+				-n 取消默认输出（源文件）
+		sed [-nefr] [action]
+			-n 只显示找到内容的行
+			-e 直接在指令模式上进行sed动作编辑，用来接多个动作
+				cat /etc/passwd | sed -e '4d' -e '6c no six line' > passwd.new
+			-f 后面跟执行脚本（sed动作集）
+			-r 使用扩展正则
+			-i 直接修改文件内容
+			a sed命令查询信息方法
+				- 测试文件
+					101,oldboy,CEO
+					102,zhaoyao,CTO
+					103,Alex,COO
+					104,yy,CFO
+					105,feixue,CIO
+				- 根据文件内容的行号进行查询
+					- 测试练习
+						- 单行显示
+							sed -n '3p' person.txt
+						- 多行显示
+							sed -n '1,3p' person.txt
+						- 多行显示，不连续
+							sed -n '1p;3p' person.txt
+				- 根据文件内容的信息进行查询
+					- 测试练习
+						- 将有oldboy内容的信息找出来
+							sed -n '/oldboy/p' person.txt
+						- 将有oldboy到alex行的信息找出来 - 根据内容信息输出多行内容 - 连续
+							sed -n '/oldboy/,/Alex/p' person.txt "," 范围
+						- 将有oldboy，alex行的信息找出来 - 根据内容信息输出多行 - 不连续
+							sed -n '/oldboy/p;/Alex/p' person.txt 多个命令，多个操作
+			b 添加信息方法
+				- 在文件的第一行添加信息，这个信息读取的是内存中的信息
+					sed '1i 100,oldgirl,UFO' person.txt 当前行上面
+					sed '1a 100,oldgirl,UFO' person.txt 当前行下面
+				- 在文件的最后一行添加信息
+					sed '$a 107,oldbbb,ooo' person.txt
+				- 添加多行信息
+					sed '$a 100\n101' person.txt
+					企业中添加配置文件
+				- 测试：
+					01. 在第三行后面添加oldboy.txt信息
+						sed '3a oldboy.txt' person.txt
+					02. 在第二行前面添加oldboy.txt信息
+						sed '2i oldboy.txt' person.txt
+					03. 在有oldboy行的前面添加oldgirl 后面添加olddog信息
+						sed -e '/oldboy/iodlgirl' -e '/oldboy/aolddog' person.txt 一条sed命令执行多件事
+			c sed 删除信息
+				
+				- 测试练习
+					- 删除单行信息
+						sed '3d' person.txt
+					- 删除多行信息
+						sed '3,6d' person.txt
+					- 删除有oldboy的行
+						sed '/oldboy/d' person.txt 
+					- 删除第三行和第六行
+						sed -e '3d' -e '6d' person.txt
+						sed '3d;6d' person.txt
+			d sed 修改信息
+				sed 's#原有内容#修改后的内容#g' filename
+				PS：当有要匹配的内容中有相应的分割符时，注意/和#切换
+				sed 's#()#\n#g' 文件信息
+				
+			- 利用sed命令取出ip地址
+				1. 提取有ip地址的行
+					ip a s eth0 | sed -n '3p'
+				2. 取出ip地址
+					ip a s eth0 | sed -n '3p'|sed -e 's/.*inet //g' -e 's#/24.*##g'
+					
+					ip a s eth0 | sed -n '3p'|sed -r 's#^.*net (.*)/24.*#\1#g'
+					ip a s eth0 | sed -rn '3s#^.*net (.*)/24.*#\1#gp' 后项引用前项
+			- 补充
+				- 修改内容直接进行备份
+					sed -i.bak 'xx' person.txt 该之前进行备份文件，在对源文件进行修改
+				- 企业过程中的一个坑，避免n和i同时使用
+					sed -ni 's#Alex#aaa#gp' person.txt
+					- n和i参数同时使用，会将文件内容进行清空
+					- 所有参数都要放在i前面
+	3. awk
+		awk "/oldboy/" test.txt 过滤信息
+	4. find 查询文件所在路径
+		find /etc -type f -name "ifcfg*"
+		find [PATH] [option] [action]
+			- option
+				1. 时间相关参数
+					-mtime n：n天之前的一天内被更改过的文件
+					-mtime +n: 列出n天之前（不含n天）
+					-mtime -n：列出n天之内（含n天）
+					-newer file: file为一个存在的档案，列出比file还要新的文件
+							|4	|
+								-4 ->
+						<-	+4
+					|7	|6	|5	|4	|3	|2	|1	|now
+					find /old -type f -mtime +10 -delete 删除历史数据信息
+				2. 与使用者或群组相关参数
+					-uid n: n为数字uid
+					-gid n
+					-user username
+					-group groupname
+					-nouser：	在/etc/passwd中找不到用户的文件
+					-nogroup：在/etc/group中找不到组的文件
+				3. 与文件权限以及名称有关的参数
+					-name filename: 查找文件名称为filename的文件
+					-size[+-]SIZE：查找比SIZE大（+）或小（-）的文件
+						SIZE：c byte,k 1024bytes,
+						-size +50k
+					-type TYPE 查找文件类型
+						f 一般文件
+						b,c 装置文件
+						d 目录
+						l 链接文件
+						s socket 
+						p FIFO
+					-perm mode 查找权限恰好为mode1的文件
+						-rwsr-xr-x 4755
+					-perm -mode 查找权限必须包括mode的文件
+						-rwxr--r--,-perm -0744
+					-perm /mode 查找包含任意mode权限文件也会被找到
+				4. 额外可进行的动作
+					-exec command command为其他指令，接额外的指令来处理查找到的结果
+						find /usr/bin /usr/sbin -perm /7000 -exec ls -l {} \;
+						{} find找到的内容
+						-exec 开启 \;结束
+					-print 将结果打印到屏幕上，预设
+				-maxdepth 层级深度
+				-inum 根据inode查找
+系统中的环境变量
+1.	PATH	方便命令的使用
+2.	PS1	定义提示符的信息或格式
+3.	LANG 系统的编码格式
+
+# 特殊符号
+	$ 变量标识符，在命令提示符中表示普通用户
+	# 表示root用户
+	! 强制
+	`` 反引号 将引号中命令执行结果交给引号外面的命令进行处理
+	| 管线/管道符
+	{} 序列符号，通配符，显示数字或字母的序列信息
+	< 标准输入重定向符号
+	<< 标准输入重定向追加符号
+	; 命令执行后，执行下一条命令信息
+	2>
+	2>> 错误输出重定向符号
+	.	当前文件
+	.. 上一个文件
+# 经典语录
+	1. 在修改配置文件时，能复制就复制
+	2. 企业工作中出现严重异常问题：
+		放运维排错的大招：
+			1. 服务重新安装
+			2. 重启系统 reboot
+			3. 重新安装系统
+	3. 安全和系统性能（管理系统效率）是成反比的
+	4. 所有配置中，尽量要用测试环境配置
+	5. 系统中不是所有命令都可以对文件进行编辑修改
+		vim, sed -i, cat >>, echo >>
+	6. 企业中一种错误：你以为，所有的东西测试后再进行修改，确认结果

@@ -1,0 +1,93 @@
+# 第八章文件与文件系统的压缩，打包与备份
+# 主要内容
+	1. 压缩文件的用途与技术
+	2. linux系统常见的压缩指令
+	3. 打包指令 tar，解压后的selinux
+	4. xfs文件系统的备份与还原
+	5. 光盘写入工具
+	6. 其他常见压缩与备份工具
+# 内容详细
+	1. 压缩文件的用途与技术
+		- 节省磁盘空间
+		- 方便传输
+		- 文件压缩原理
+			1. 1byte=8bits,二进制位中，将多余的空间压缩出来
+		- 压缩比，压缩后的占用的磁盘空间/压缩前的磁盘空间
+		
+	2. linux系统常见的压缩指令
+		- 副档名
+			*.tar		--- tar打包的数据，并没有压缩
+			*.tar.gz	--- tar打包，其中使用gzip压缩
+			*.tar.bz2	--- tar打包，其中使用bzip2压缩
+			*.tar.xz	--- tar打包，其中使用xz压缩
+			# 压缩命令，只能对一个文件进行压缩
+			*.gz		--- gzip 替代compress
+			*.Z			--- compress
+			*.bz2		--- bzip2
+			*.xz		--- xz
+			*.zip		--- zip
+		- *.gz
+			gzip 可以解压compress，zip与gzip等指令压缩的文件
+			gzip [-cdtv#] filename
+				-c 将压缩的数据打印出来
+				-d 解压
+					解压时，会将*.gz文件删除
+				-t 查看压缩文件
+				-v 显示压缩过程的信息
+				-# 压缩等级，-1最快，压缩比最差，-9最慢，压缩比最好，预设-6
+			- 预设，压缩后，源文档不再存在
+			- zcat/zmore/zless service.gz 查看压缩文档
+			- gzip -9 -c services > service.gz 压缩文件，并保留源文件
+			- zgrep -n 'http' services.gz 找出压缩文件中http的行
+			- znew 将compress压缩的文件转成gzip的格式
+		- *.bz2
+			相较于gzip提供更好的压缩比
+			bzip2 [-cdkzv#] filename
+				-c 将压缩过程中内容输出到屏幕
+				-d 解压
+				-k 保留原始文件
+				-z 压缩参数，预设，可以不加
+				-v 显示压缩信息
+				-# 压缩等级
+			- bzcat
+			- bzip2 -9 -c services > service.bz2
+		- *.xz
+			xz [-dtlkc#] filename
+				-d 解压
+				-t 检测压缩完整性
+				-l 列出压缩文件信息
+					可以查看压缩前后的信息
+				-k 保留原始文件
+				-c
+				-#
+	3. 打包指令 tar，解压后的selinux
+		tar [-z|j|-J] [cv] [-f 待建立的压缩文件名] filename... 打包并压缩
+			-z	gzip	*.tar.gz
+			-j	bzip2	*.tar.bz2
+			-J	xz		*.tar.xz
+		tar [-z|j|-J] [tv] [-f 待建立的压缩文件名] filename... 查看压缩档
+		tar [-z|j|-J] [xv] [-f 待建立的压缩文件名] filename... 解压
+			-C 在指定目录中解压
+			-p(小写) 保留备份数据的原本权限与属性
+			-P(大写) 保留绝对路径
+			--exclude=FILE 排除file文件不要打包
+		-- 仅从压缩文件中解压出单一文件
+			1. 先找到要解压的文件
+				tar -tvf /root/oldboy.tar.bz2 | grep 'shadow'
+			2. 解压
+				tar -jxvf 打包文件.tar.bz2 待解压文件（与上面找到的文件名相同）
+				tar -jxvf -f /root/etc.tar.bz2 etc/shadow
+		- 压缩比某个文件新的文件
+			--newer 包括mtime和ctime
+			--newer-mtime
+			tar -jcvf /root/etc.newer.then.passwd.tar.bz2 --newer-mtime="2015/06/17" /etc/*
+		- tar使用管道
+			tar -cvf - /etc | tar -xvf - 可以用来复制文件到某个目录目录中
+		- selinux
+			三种方法
+				- 建立/.autorelabel 重启
+				- 复原系统后，restorecon -Rv /etc
+				- vim /etc/selinux/config -- permissive
+	4. xfs文件系统的备份与还原
+	5. 光盘写入工具
+	6. 其他常见压缩与备份工具
