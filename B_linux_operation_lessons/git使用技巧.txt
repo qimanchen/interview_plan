@@ -1,18 +1,2 @@
 # git使用技巧
 # git让单个文件回退到指定版本
-	1. 进入到文件所在路径，或确定文件的路径位置
-		git log filename
-		- 若文件修改记录太多，则使用
-			git log -number filename
-	2. 回退到指定版本
-		git reset ** filename
-		这个是将commit的回退到工作区中
-			git reset -mixed	默认方式，回退到某个版本，只保留源码，回退commit和index信息
-			git reset -soft		只回退commit信息，不会恢复到indexfile一级，如果还需要提交，直接commit即可
-			git reset -hard		彻底的回退到某个版本，包括源码
-	3. 提交到本地参考
-		git commit -m "提交描述"
-	4. 更新到工作目录中
-		git checkout filename
-	5. 提交到远程仓库
-		git push origin master
