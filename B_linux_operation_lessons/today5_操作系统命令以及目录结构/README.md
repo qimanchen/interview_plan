@@ -37,6 +37,7 @@
 			3. 需要将设备进行挂载才能看到内部的命令
 				- 挂载命令格式
 					# mount 挂载设备文件信息 挂载点（目录信息）
+					mount /dev/sda1 /mnt
 					ps：挂载点目录必须存在
 			4. 卸载
 				# umount 挂载点（目录信息）
@@ -87,10 +88,12 @@
 				# ifup eth0
 			# ifdown eth0 && ifup eth0 前一个命令执行成功后在执行后一个命令
 			# systemctl stop NetworkManager 关闭网络管理的服务
+			# NetworkManager是响应nmtui的设置
 		- DNS解析配置文件
 			1. 直接修改网卡中的DNS参数
 			2. 修改 /etc/resolv.conf中修改 nameserver 114.114.114.114
 			重启网络服务时，这是以网卡服务中配置优先
+		- dmesg | grep -i eth 可以查看网卡mac地址
 # 课程作业
 	1. 总结命令快捷方式
 	2. 总结存储设备挂载

@@ -119,5 +119,5 @@
 			ip address show eth0| sed  -nr "/([0-9]+\.){3}/p"|sed -r "s#.*inet (.*)/24.*#\1#g"
 			ip address show eth0| awk "/ ([0-9]+\.){3}[0-9]{1,3}\/24/"|awk 'BEGIN{FS=" +"}{print $2}'
 		hostname -i 显示主机的ip
-	- stat 提取出权限
+	- stat 提取出权限和文件时间信息
 # 拓展

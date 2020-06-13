@@ -11,7 +11,7 @@ export PATH=/bin:/sbin:/usr/bin:/usr/sbin
 
 # 0. userinput
 usergroup=""		# if your account need secondary group, add here.
-pwmech="oepnssl"	# "openssl" or "account" is needed.
+pwmech="openssl"	# "openssl" or "account" is needed.
 homeperm="no"		# if "yes" them I will modify home dir permission to 711
 
 # 1. check the accountadd.txt file

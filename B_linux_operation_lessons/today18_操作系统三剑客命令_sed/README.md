@@ -100,6 +100,7 @@
 					sed '2i oldboy.txt' person.txt
 				03. 在有oldboy行的前面添加oldgirl 后面添加olddog信息
 					sed -e '/oldboy/iodlgirl' -e '/oldboy/aolddog' person.txt 一条sed命令执行多件事
+					ps: 这里 '/oldboy/i oldgirl' 可以用空格隔开
 		c sed 删除信息
 			
 			- 测试练习
@@ -115,7 +116,7 @@
 		d sed 修改信息
 			sed 's#原有内容#修改后的内容#g' filename
 			PS：当有要匹配的内容中有相应的分割符时，注意/和#切换
-			sed 's#()#\n#g' 文件信息 后项应用前项
+			sed 's#()#\n#g' 文件信息 后项引用前项
 				- & 表示要匹配的一整行的内容
 			
 		- 利用sed命令取出ip地址

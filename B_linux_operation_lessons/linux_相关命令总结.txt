@@ -242,7 +242,33 @@
 	ln -s 软
 47.	wc	统计命令
 	wc -l 统计有多少行
-		
+48. chmod	修改文件目录数据权限信息
+	chmod u/g/o
+	chmod a
+49. useradd	创建用户命令
+	-s /sbin/nologin 	指定用户shell登录方式
+	-M	不创建家目录
+	-u	指定用户uid
+	-g	添加主组
+	-G	添加附属组
+	-c	添加用户注释
+50. userdel	删除用户信息
+	userdel -r 彻底删除
+51. groupadd 组操作
+	groupmod
+	groupdel
+52. chown	修改用户属主和属组
+	chown -R 递归改变
+53. 如何让linux和windows主机之间传输数据
+		yum install -y lrzsz
+		在linux上操作
+		rz -y (windows -> linux) 从windows上下在重要数据信息
+		sz -y (linux -> windows) 从linux上上传重要数据到windows
+54. sort 排序命令
+	sort -n 按照数值排序
+	sork -k1 按照指定列进行排序
+55. dd 模拟创建指定大小的文件
+	dd if=/dev/zero of=/mount01 bs=10M count=10
 # 高级命令 4剑客
 	1. grep 对信息进行过滤筛选
 		grep -B n	显示找到当前行所在行的前几行内容

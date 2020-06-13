@@ -123,6 +123,14 @@
 					服务器4核 -- 负载值为3左右，就要关注
 			2. 命令
 				w
+					[root@centos6 ~]$ w
+					21:47:49 up 28 min,  1 user,  load average: 0.00, 0.00, 0.00
+					USER     TTY      FROM              LOGIN@   IDLE   JCPU   PCPU WHAT
+					root     pts/0    192.168.90.1     21:22    0.00s  0.13s  0.02s w
+				uptime
+					[root@centos6 ~]$ uptime
+					21:47:45 up 28 min,  1 user,  load average: 0.00, 0.00, 0.00
+
 	- vi使用方法
 # 课程知识总结
 	1. 环境变量和别名配置文件

@@ -18,6 +18,8 @@
 				
 				which 命令
 				rpm -qf 文件(绝对路径) 查看系统中的文件属于哪个安装包
+					yum provides command
+					yum provides pip
 				rpm -qf `which ssh`
 			- rpm 安装软件
 				默认安装路径 /var/lib/rpm
@@ -49,6 +51,7 @@
 					rpm --rebuilddb 重建数据库
 			- yum卸载
 				yum remove pam-devel
+				ps: 这种卸载会影响依赖文件
 			补充：linux和windows软件安装程序区别
 				xxx.exe -- windows 安装
 				xxx.rpm -- centos
@@ -74,7 +77,7 @@
 						systemctl disable firewalld
 					PS:查看服务状态信息简便方法
 						systemctl is-active firewalld 服务是否在运行
-						systemctl is-enable firewalld 服务是否开机运行
+						systemctl is-enabled firewalld 服务是否开机运行
 			2. 系统的selinux程序
 				selinux服务对root用户权限进行控制
 				很多企业中：selinux服务默认关闭
