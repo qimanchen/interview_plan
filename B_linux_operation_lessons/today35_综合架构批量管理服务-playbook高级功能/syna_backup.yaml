@@ -1,0 +1,16 @@
+---
+- hosts: rsync_client
+  tasks:
+    - name: 01-install inotify
+      yum: name=inotify-tools state=installed
+    - name: 02-put sersync to /usr/local
+      unarchive: src=/etc/ansible/server_file/sersync.tar.gz dest=/usr/local
+    - name: 07-change sersyc command excute perm
+      shell: "chmod a+x /usr/local/sersync/bin/sersync"
+    - name: 08-add sersync command to PATH
+      shell: "export PATH=$PATH:/usr/local/sersync/bin"
+    - name: 05-reload /etc/profile
+      script: /etc/profile
+    - name: 09-start sersync
+      shell: "sersync -dro /usr/local/sersync/conf/confxml.xml"
+...

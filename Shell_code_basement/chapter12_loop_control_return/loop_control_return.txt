@@ -1,0 +1,12 @@
+# 循环控制和状态返回值
+	1. break continue exit return 
+		- break n # 省略n，跳出整个循环，n表示跳出的成熟
+		- continue n # n 退到第n层继续循环
+		- exit n # n 为shell程序返回值
+		- return n # 函数返回值
+	2. 设置网卡ip
+		ip addr add 10.0.2.11/24 dev eth0 label eth0:0  #<==添加IP。
+		ip addr del 10.0.2.11/24 dev eth0 label eth0:0  #<==删除IP。
+		
+		ifconfig eth0:0 10.0.2.10/24 up    #<==添加IP。
+		ifconfig eth0:0 10.0.2.10/24 down  #<==删除IP。

@@ -1,0 +1,32 @@
+# Expect自动化交互程序应用实践
+	- Expect是一个用来实现自动交互功能的软件套件 -- 基于TCL的脚本编程工具语言
+	- Expect自动化交互工作流程简单说明
+		sapwn启动指定进程 -- expect获取期待关键字 -- send向指定进程发送指定字符 -- 进程执行完毕 -- 退出结束
+	- shell协程
+		coproc name {command;} -- 协程运行结果不会输出在终端上
+	1. Expect软件安装
+		rpm -qa expect
+		yum install expect -y
+		rpm -qa expect
+	2. expect相关命令
+		1) spawn -- 执行一个命令或程序，后续的expect的操作都会在这个命令或程序中进行
+			- 语法
+				spawn [选项] [需要自动交互的命令或程序]
+				spawn ssh root@192.168.33.130 uptime
+			- 选项
+				-open 启动文件进程
+				-ignore 表示忽略某些信号
+		2）expect -- 获取spawn命令执行后的信息，是否匹配，匹配则执行后续动作
+			- 语法
+				expect 表达式 [动作]
+					方式一：
+						expect "*password" {send "centos\n"} -- 需要在expect命令中执行
+					
+						expect eof -- 要想输出结果，必须加eof，表示expect结束
+					方式二：
+						expect "*password"
+						send "123456\n"
+						expect eof
+		
+			
+			

@@ -1,0 +1,59 @@
+# 全网备份项目
+
+# 要求
+	nginx web服务器			10.0.2.17/24		172.16.1.17/24		web01
+		nfs						10.0.2.31/24		172.16.1.31/24		nfs01
+		rsync					10.0.2.41/24		172.16.1.41/24		backup
+		
+		要求：
+			每天晚上00点整在web服务器上打包备份系统配置文件、网站程序目录以及访问日志并通过rsync命令
+			推送备份服务器backup上备份保留（备份思路可以先按本地日期打包，然后再推送到备份服务器backup上）
+			nfs服务器同web服务器，实际工作中就是全部服务器
+# 实现步骤
+	1. 所有服务器的备份目录必须都为/backup
+		web01 nfs01 backup
+		if [ ! -e ${Backup_dir}/${IP_info}/ ]; then
+			mkdir $Backup_dir/$IP_info -p
+		fi
+	2. 要备份的系统配置文件包括但不限于
+		/var/spool/cron/root
+		/etc/rc.local
+		/server/scripts
+		/etc/sysconfig/iptables
+		
+		web01 nfs01
+		
+		cd /
+		tar zchf $Backup_dir/$IP_info/system_backup_$(date +%F_week%w -d "-1day").tar.gz ./var/spool/cron/root ./etc/rc.local ./server/scripts ./etc/sysconfig/iptables
+	3. web服务器站点目录 /var/html/www
+	4. web服务器A访问日志路径/app/logs
+		tar zchf /backup/www_backup_$(date +%F_week%w -d -1day).tar.gz ./var/html/www
+		tar zchf /backup/www_log_backup_$(date +%F_week%w -d -1day).tar.gz ./app/logs
+	
+	5. web服务器保留打包后的七天的备份数据即可（本地保留不能多于7天）
+		find /backup -type f -mtime +7 | xargs rm # 注意可能存在没有7天前的数据的情况
+		
+	6. 备份服务器上，保留每周一的所有数据副本，其它要保留6个月的数据副本
+		backup
+		部署好服务
+		
+		find /backup -type f -mtime +180 ! -name "*week1.tar.gz" | rm
+		
+	7. 备份服务器上要按照备份数据服务的内网ip为目录保存备份，备份的文件要按照时间名称保存
+	
+	8. 需要确保备份数据的完整性，完整性检查，把备份的成果与失败的结果发送给系统管理员（发送邮件）
+		backup
+		
+		客户端
+			find /backup/ -type f -mtime -1 ! -name "finger"| xargs md5sum > /backup/finger.txt
+			
+			mkdir -p /backup/172.16.1.31
+			rsync -avz /backup/ rsync_backup@172.16.1.41::backup --password-file=/etc/rsync.password
+		服务端
+			# 删除6个月以前的数据
+			find /backup -type f -mtime +180 ! -name "*week1.tar.gz" | rm
+			# 完整性验证
+			find /backup/ -type f -name "finger.txt" | xargs md5sum -c &> /tmp/check.txt
+			# 发送到运维人员邮箱
+			mail -s "发送测试" 1033178199@qq.com < /tmp/check.txt
+		

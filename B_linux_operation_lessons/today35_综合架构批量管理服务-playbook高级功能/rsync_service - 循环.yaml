@@ -1,0 +1,38 @@
+# /etc/ansible-playbook/rsync_service.yaml
+---
+- hosts: 172.16.1.41
+  tasks:
+    - name: 01-install rsync
+      yum: name=rsync state=installed
+    - name: 02-push conf file & password file
+      # 循环执行两个服务
+      # copy: src=/etc/ansible/server_file/rsync_server/rsyncd.conf dest=/etc/
+      # copy: src=/etc/ansible/server_file/rsync_server/rsyncd.password dest=/etc/ mode=600
+      
+      copy: src=/etc/ansible/server_file/rsync_server/{{ item.src }} dest={{ item.dest }} mode={{ item.mode }}
+      with_items:
+        - { src: 'rsyncd.conf', dest: '/etc/', mode: '644' }
+        - { src: 'rsyncd.password', dest: '/etc/', mode: '600'}
+        # 注意要在批量管理主机上创建rsyncd.password
+    - name: 03-create user
+      user: name=rsync create_home=no shell=/sbin/nologin
+      # shell: useradd -M -s /sbin/nologin rysnc
+      # 不会检查用户是否存在
+    - name: 04-create backup file
+      file: path=/backup state=directory owner=rsync group=rsync
+    - name: 06-start rsync server
+      service: name=rsyncd state=started enabled=yes
+      # 如果配置文件修改了，如何进行配置
+      # 如果服务已经启动了，那么这步不会被执行
+ - hosts: 172.16.1.31
+   tasks:
+     - name: 01-install rsync
+       yum: name=rsync state=installed
+     - name: 02-create password file
+       copy: content=oldboy123 dest=/etc/rsync.password mode=600
+     - name: 03-create test file
+       file: dest=/tmp/test.txt state=touch
+     - name: 04-check data backup
+       # synchronize模块
+       shell: rsync -avz /tmp/test.txt rsync_backup@172.16.1.41::backup --password-file=/etc/rsync.password
+...

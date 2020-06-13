@@ -1,0 +1,46 @@
+---
+- hosts: 172.16.1.31
+  tasks:
+    - name: install nfs
+      yum:
+        name: nfs-utils
+        state: installed
+    - name: install rpcbind
+      yum:
+        name: rpcbind
+        state: installed
+    - name: set nfs configu file
+      copy:
+        content: "/data 172.16.1.0/24(rw,sync)"
+        dest: /etc/exports
+        mode: 600
+    - name: create backup directory
+      file:
+        dest: /data
+        state: directory
+        owner: nfsnobody
+        group: nfsnobody
+    - name: start rpcbind service
+      service:
+        name: rpcbind.service
+        state: started
+        enabled: yes
+    - name: start nfs service
+      service:
+        name: nfs
+        state: started
+        enabled: yes
+        
+- hosts: 172.16.1.41
+  tasks:
+    - name: install nfs-utils for support nfs filesystem
+      yum:
+        name: nfs-utils
+        state: installed
+    - name: mount nfs network disk
+      mount:
+        src: 172.16.1.31:/data
+        path: /mnt
+        fstype: nfs
+        state: mounted
+...

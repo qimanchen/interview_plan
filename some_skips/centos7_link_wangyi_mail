@@ -1,0 +1,17 @@
+让linux连接网易邮箱
+	让163邮箱进行发 -- 用qq邮箱进行收
+		163邮箱配置
+		POP3/SMTP/IMAP
+			IMAP/SMTP -- 近30天
+			开启客户端删除邮件提醒
+			smtp.163.com
+		客户端的授权密码
+			DZGQZOMSURHTOUOZ
+	a 配置163企业邮箱
+	b 编写linux服务端邮箱服务配置文件
+		vim /etc/mail.rc
+		set from=18770917247@163.com smtp=smtp.163.com
+		set smtp-auth-user=18770917247@163.com smtp-auth-password=DZGQZOMSURHTOUOZ smtp-auth=login
+	systemctl restart postfix.service
+# 测试
+	mail -s "主题" 1033178199@qq.com < info_file.txt

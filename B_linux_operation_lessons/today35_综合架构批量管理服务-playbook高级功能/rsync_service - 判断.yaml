@@ -1,0 +1,41 @@
+# /etc/ansible-playbook/rsync_service.yaml
+---
+- hosts: 172.16.1.41
+  tasks:
+    - name: 01-install rsync
+      yum: name=rsync state=installed
+    - name: 02-push conf file
+      copy: src=/etc/ansible/server_file/rsync_server/rsyncd.conf dest=/etc/
+    - name: 03-create user
+      user: name=rsync create_home=no shell=/sbin/nologin
+      # shell: useradd -M -s /sbin/nologin rysnc
+      # 不会检查用户是否存在
+    - name: 04-create backup file
+      file: path=/backup state=directory owner=rsync group=rsync
+    - name: 05-create password file
+      copy: content=rsync_backup:oldboy123 dest=/etc/rsync.password mode=600
+    - name: 06-start rsync server
+      service: name=rsyncd state=started enabled=yes
+      # 如果配置文件修改了，如何进行配置
+      # 如果服务已经启动了，那么这步不会被执行
+ - hosts: 172.16.1.31
+   tasks:
+     - name: 01-install rsync
+       yum: name=rsync state=installed
+     - name: 02-create password file
+       copy: content=oldboy123 dest=/etc/rsync.password mode=600
+     # 默认两步都会执行
+     - name: 03-create test file
+       file: dest=/tmp/test_nfs.txt state=touch
+       when: (ansible_hostname == "nfs01") # 注意这里主机名称要有相应的双引号
+     - name: 03-create test web file
+       file: dest=/tmp/test_web.txt state=touch
+       when: (ansible_hostname == "web01")
+     # 判断是否是172.16.1.31
+     # 判断是否是172.16.1.7
+     - name: 04-check data backup
+       # synchronize模块
+       shell: rsync -avz /tmp/test_nfs.txt rsync_backup@172.16.1.41::backup --password-file=/etc/rsync.password
+     - name: 05-check test web
+       shell: rsync -avz /tmp/test_web.txt rsync_backup@172.16.1.41::web --password-file=/etc/rsync.password
+...

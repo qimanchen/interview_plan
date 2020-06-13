@@ -1,0 +1,58 @@
+# shell array
+	1. shell数组
+		- 定义
+			-- 列表定义
+				array=(value1 value2 value3 ...)
+				echo ${array[*]}
+				echo ${array[1} -- value2
+			-- 键值对定义
+				array=([1]=one [2]=two [3]=three)
+				echo ${array[2]} -- two
+			-- 分别定义
+				array[0]=a;array[1]=b;array[2]=c
+			-- 使用命令动态定义
+				array=($(命令))
+				-- $(命令) 产生列表
+			-- declare -a array 来定义数组类型
+		- 打印数组
+			array=(one two three)
+			-- 打印数组元素
+				echo ${array[0]} -- one
+				echo ${array[*]} -- one two three
+			-- 打印数组个数
+				echo ${#array[*]} -- 3
+			-- 数组赋值
+				如果下标不存在，则会自动添加一个新数组元素
+				如果下标存在，则会覆盖原来的值
+			-- 数组删除
+				unset 数组[下标] -- 清除相应的数组元素
+				unset 数组 -- 清除整个数组
+			-- 数组内容的截取和替换
+				array=(1 2 3 4 5)
+				echo ${array[@]:1:3} -- 2 3 4
+				PS:下标从0开始索引
+				
+				--- 替换
+					array=(1 2 3 1 1)
+					echo ${array[@]/1/b} -- 将所有的1替换，不会修改原来的数组内容
+					echo ${数组名[@|*]/查找字符/替换字符}
+			-- 删除数组中部分内容，每次删除都为一个元素
+				array=(one two three four five)
+				echo ${array[@]#o*} -- one two three four five 最短删除
+				echo ${array[@]##o*} -- 最长 two ...
+		PS: man bash -- Arrays 查看数组相关信息
+	2. shell数组重要命令
+		- 定义命令
+			array=(1 2 3)
+			array=($(ls))
+			array[3]=4
+			
+		- 打印命令
+			-- 打印全部命令
+				${array[@]}
+			-- 打印数组长度
+				${#array[*]}
+			-- 打印单个元素
+				${array[i]}
+			
+				

@@ -1,0 +1,13 @@
+#!/bin/bash
+# Function: This scripts is used to get all info of server.
+BASE_INFO=$(hostnamectl|awk -F":" '{print $2}')
+echo "服务器主机名为: $(echo $BASE_INFO|awk '{print $1}')"
+echo "服务器类型为: $(echo $BASE_INFO|awk '{print $2}')"
+echo "服务器操作系统为: $(echo $BASE_INFO|awk '{print $7}')"
+echo "服务器内核为: $(echo $BASE_INFO|awk '{print $(NF-1)}')"
+echo "服务器架构为: $(echo $BASE_INFO|awk '{print $NF}')"
+# get memory using rate
+df -h| grep "/dev/sda"|awk -F"[ ]+" '{print "磁盘",$1,"使用率为: ",$5}'
+# get inode using rate
+df -ih| grep "/dev/sda"|awk -F"[ ]+" '{print "磁盘",$1,"inode 使用率为: ",$5}'
+uptime|awk -F":" '{print "系统一分钟, 五分钟, 十五分钟的负载分别为",$NF}'

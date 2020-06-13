@@ -1,0 +1,41 @@
+- host: 172.16.1.41
+  tasks: 
+    - name: install rsync
+      yum:
+        name: rsync
+        state: installed
+    - name: copy config file
+      copy:
+        src: /etc/rsyncd.conf
+        dest: /etc/
+    - name: create rsync user
+      user:
+        name: rsync
+        create_home: no
+        shell: /sbin/nologin
+    - name: create backup dirctory
+      file:
+        dest: /backup
+        state: directory
+        owner: rsync
+        group: rsync
+    - name: create password file for rsync_backup user
+      copy:
+        content: rsync_backup:oldboy123
+        dest: /etc/rsync.password
+        mode: 600
+    - name: start rsync service
+      service:
+        name: rsyncd
+        state: started
+        enabled: yes
+        
+  
+- host: 172.16.1.31
+  tasks:
+    - name: create password file for auth in client
+      copy:
+        content: oldboy123
+        dest: /etc/rsync.password 
+        mode: 600
+  

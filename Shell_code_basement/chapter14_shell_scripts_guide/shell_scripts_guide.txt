@@ -1,0 +1,105 @@
+# Shell脚本规范
+	1. 脚本的第一行内容为指定脚本的解释器
+		#!/bin/bash
+		or
+		#!/bin/sh
+	2. 脚本需要添加上版本，作者，时间等额外信息
+		# Date: 21:49 2020-05-30
+		# Author: Created by Qiman
+		# Mail: 1033178199@qq.com
+		# Function: This scripts function is ...
+		# Version: 1.0
+		PS: 这可以通过配置~/.vimrc配置文件时自动添加上以上信息
+	3. 注释尽量使用英文注释
+		若使用中文：export LANG="zh_CN.UTF-8"
+	4. Shell脚本应该以".sh"结尾
+	5. Shell脚本应该放置在固定的路径下
+		如/server/scripts
+	6. 代码书写技巧
+		1）成对的符号一次性写出来
+			{}	[]	''	``	""
+		2）中括号两端至少要有一个空格
+			先键入一对中括号，然后退一格，输入两个空格，再退一个空格
+		3）流控制语句应该一次将格式写完，再添加内容
+			if conditions
+			then
+				codes
+			fi
+			
+			for
+			do
+				codes
+			done
+			
+			while until case 等
+		4）通过缩进让代码更易读
+		5）字符串赋值给变量时，应该加双引号，且等号前后不能有空格
+			TEST_FILE="test.txt"
+		6）脚本中的单引号，双引号，反引号必须为英文字符
+	7. Shell脚本变量命名及引用变量规范
+		1）全局变量 - 环境变量
+			定义全部大写，如APACHE_ERR
+			见名只其意
+			全局变量定义放置在系统的全局路径中
+			采用export 来定义
+			全局变量一般为任意Shell中可以直接使用
+			-- 注意定时任务中路径的全局变量
+			
+			/etc/profile
+			export APACHE_ERR="hello"
+		2）局部变量定义
+			变量命名统一，如驼峰语法（第二个单词首字母大写）
+				qiMan
+			函数中的局部变量可以通过local进行定义
+				function TestFunc(){
+					local i
+					for ((i==0;i<n;i++))
+					do
+						echo "do something"
+					done
+				}
+		3）变量应用规范
+			- 变量前后都有字符
+				${APACHE_ERR}
+			- 变量内容为字符串
+				"${APACHE_ERR}"
+			- 变量为整数
+				$APACHE_ERR
+			全局变量、局部变量、函数变量、数组变量同此规则
+	8. Shell函数命名和函数定义规范
+		- 命名
+			首字母大写，语义清晰
+			- 可以加前后缀
+				Max -- 最大
+				Min -- 最小
+				Is -- 判断
+				Get -- 取值
+				Do -- 处理
+		- 为区别一些字符串，可以在函数名前加function关键字
+		- 最好带上return语句
+	9. Shell脚本（模块）高级命名规范
+		1）使用统一后缀，".sh"
+		2）模块的启动和停止脚本统一命名为start_moduleName.sh，stop_moduleName.sh
+		3）监控脚本通常以*_mon.sh为后缀
+		4）控制脚本一般以*_ctl.sh为后缀
+	10. Shell脚本的代码风格
+		1）代码框架
+			- 易变信息定义为变量或特殊位置参数
+			- 把Shell通用变量以配置文件的形式单独放置，命名为"功能.cfg"，放置在conf目录中
+				引用时，通过在脚本开头使用source conf/nginx.conf来加载
+			- 将程序功能分段、分模块采用函数实现，并放置到单独的文件中
+			- 公共函数可以存放到/etc/init.d/functions 中，调用时，通过source文件全路径
+			- 把脚本的功能和配置明确分开，主脚本只实现程序主干，加载配置以及加载函数等功能实现应尽量封装在子函数中
+				bin
+					ipsecctl
+				conf
+					ipsec.cfg
+				func
+					functions
+		2）缩进规范
+			- 每一层循环使用一个缩进（TAB设置为四个空格)
+	11. Shell脚本变量及文件检查规范
+		- 检查配置项是否为空，是否可执行
+		- 对于会影响脚本运行的配置项，需要进行非空检查
+			if [ -n "${FILE_PATH}" ]
+		- httpd=${HTTPD-/usr/sbin/httpd} -- 非空设置默认值

@@ -1,0 +1,16 @@
+# 整合rsync和nfs服务多个剧本
+# 方式一
+- hosts: all
+  tasks:
+    - include_tasks: rsync_service.yaml
+    - include_tasks: nfs_service.yaml
+    import_tasks
+# 这种方式需要将所有的子任务中的去掉服务
+
+# 方式二
+- include: rsync_service.yaml
+- include: nfs_service.yaml
+
+# 方式三
+- import_playbook: rsync_service.yaml
+- import_playbook: nfs_service.yaml

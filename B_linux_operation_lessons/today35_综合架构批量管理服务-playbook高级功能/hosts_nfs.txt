@@ -1,0 +1,10 @@
+[nfs:children]
+nfs_server
+nfs_client
+
+[nfs_server]
+172.16.1.31
+
+[nfs_client]
+172.16.1.41
+172.16.1.17

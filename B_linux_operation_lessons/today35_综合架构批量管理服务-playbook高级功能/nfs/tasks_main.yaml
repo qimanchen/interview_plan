@@ -1,0 +1,22 @@
+# main.yaml
+# 服务端要干的事
+- name: 01-copy conf file
+  # copy: src=/etc/ansible/ansible_playbook/nfs-file/nfs-server/exports dest=/etc
+  copy: src=exports dest=/etc # file文件优化
+  # 修改了配置文件，进行服务的重启
+  notify: restart nfs service
+- name: 02-create data dir
+  # 可能存在多个存储目录
+  file: path={{ Data_dir }} state=directory owner=nfsnobody group=nfsnobody
+  # file:
+    # path=['data01', 'data02', 'data03']
+    # state: directory
+    # owner: nfsnobody
+    # group: nfsnobody
+- name: 03-boot server
+  # service: name=rpcbind state=started enabled=yes
+  # service: name=nfs state=started enabled=yes
+  service: name={{ item }} state=started enabled=yes
+  with_items:
+    - rpcbind
+    - nfs

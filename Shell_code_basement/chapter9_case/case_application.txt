@@ -1,0 +1,119 @@
+# case
+	-- 双分号停止
+	-- *) -- 未匹配到任何值，
+	1. 语法格式
+		case "变量" in
+			value1)
+				...
+				;;
+			value2)
+				...
+				;;
+			*)
+				...
+				;;
+		esac
+	2. case 语句实践
+		1) if
+			#!/bin/bash
+			read -p "Please input on number: " num
+			if [[ "${num}" =~ [0-9] ]];then # 匹配规则不要加引号
+				echo $num
+			else
+				echo "input ignore."
+			fi
+		
+		2) case
+			#!/bin/bash
+			read -p "Please input a number: " ans
+			case "$ans" in
+				[1-9])
+					echo "The num you input is 1."
+					;;
+				*)
+					echo "Please input [0-9] int"
+					exit;
+					# 此处的分号可以省略
+			esac
+		-- 练习2
+			#!/bin/bash
+			menu(){
+				cat << EOF
+							(1) apple
+							(2) pear
+							(3) banana
+							(4) cherry
+				EOF
+			}
+			menu
+			read -p "please choose on fruit: " ch
+			case "$ch" in
+				1)
+					echo "you choose the red apple."
+					;;
+				2)
+					echo "you choose the white pear."
+					;;
+				3)
+					echo "you choose the yellow banana."
+					;;
+				4)
+					echo "you choose the red cherry."
+					;;
+				*)
+					echo "Sorry, this fruit not exists."
+			esac
+	-- 字体加颜色
+		\[\e[32;1m\] \[\e[0m\]
+		30 灰色--黑色
+		31 红色
+		32 绿色
+		33 黄色 -- 棕色
+		34 蓝色
+		35 粉色 - 洋红
+		36 浅蓝 -- 蓝绿
+		37 白色
+		echo -e "\e[31;1m红色字oldboy\e[0m"
+		echo -e "\033[31;1m红色字oldboy\033[0m"
+			-- echo -e 执行转义
+			1-- 加粗显示 man console_codes获取
+			31m --设置颜色
+			[0m -- 关闭所有属性
+				-- 其他一些控制码
+					\33[0m 关闭所有属性
+					\33[1m 设置高亮度
+					\33[4m 下划线
+					\33[5m 表示闪烁
+					\33[7m 表示反显
+					\33[8m 表示消隐
+					\33[30m -- \33[37m 设置前景色
+					\33[40m -- \33[47m 设置背景色
+		# 设置背景色
+			echo -e "\033[40;37m 黑底白字oldboy\033[0m"  #<==40m表示黑色背景。
+			echo -e "\033[41;37m 红底白字oldboy\033[0m"  #<==41m表示红色背景。
+			echo -e "\033[42;37m 绿底白字oldboy\033[0m"       #<==42m表示绿色背景。
+			echo -e "\033[43;37m 棕底白字oldboy\033[0m"       #<==43m表示棕色背景（brown），和黄色背景相近。
+			echo -e "\033[44;37m 蓝底白字oldboy\033[0m"       #<==44m表示蓝色背景。
+			echo -e "\033[45;37m 洋红底白字oldboy\033[0m"       #<==45m表示洋红色背景（magenta），和紫色背景相近。
+			echo -e "\033[46;37m蓝绿底白字oldboy\033[0m"       #<==46m表示蓝绿色背景（cyan），和浅蓝色背景相近。
+			echo -e "\033[47;30m 白底黑字oldboy\033[0m"       #<==47m表示白色背景。
+		# 实现往openvpn_authfile.conf中添加用户
+			chattr -R +i 递归处理目录隐藏权限
+		# 实现nginx启动脚本流程
+			1. 编写启动脚本 /etc/init.d/nginx
+			2. 添加执行权限
+				chmod a+x /etc/init.d/nginx
+			3. 注册成服务
+				chkconfig --add nginx
+			4. 设置开机自启动
+				chkconfig nginx on
+			5. 重启，查看nignx服务是否自动启动
+				shutdown -h 0 -r
+				ps -ef | grep nginx
+			6. 对nginx服务执行停止/启动/重新读取配置文件操作
+				systemct start|reload|stop|restart nginx.service
+		# 经典系统脚本
+			/etc/init.d/functions此脚本的部分注释可参考http://www.cnblogs.com/image-eye/archive/2011/10/26/2220405.html
+			nginx 启动脚本
+			rpcbind 启动脚本
+			mysql 启动脚本

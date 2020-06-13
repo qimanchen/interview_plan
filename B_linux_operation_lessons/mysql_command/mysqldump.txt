@@ -1,0 +1,116 @@
+# mysqldump
+
+# 说明
+	mysqldump为mysql自带的逻辑备份工具
+
+# 备份原理
+	通过协议连接到mysql数据库，将需要备份的数据查询出来，并将查出的数据转换为对应的insert语句
+	还原数据时，只需要执行这些insert语句
+# 备份
+
+	# 命令格式
+		mysqldump [options] database_name [table_names] > 备份脚本
+	or
+		mysqldump [options] --数据库名 [options 表名] > 备份脚本 (*.sql)
+		
+	or
+		mysqldump [options] --all-databases [options] > 备份脚本
+		
+	# options说明
+		参数			缩写			含义
+		--host			-h				服务器IP
+		--port			-p				服务器端口
+		--user			-u				mysql用户名
+		--password		-p				对应mysql用户管理密码
+		--databases						指定要备份的数据库
+		--all-databases					备份mysql服务中的所有数据库
+		--compact						去除输出注释
+		--comments						添加备份注释说明
+		--complete-insert				输出完成的插入语句
+		--lock-tables					备份前锁定所有数据库表
+		--lock-all-tables				可以保证所有数据库导出状态一致
+		--no-create-db/--no-create-info	禁止生成创建数据库语句
+		--force							出现错误仍继续备份
+		--default-character-set			指定默认字符集
+		--add-locks						备份数据表时锁定数据库表
+		--flush-privileges				刷新数据库更新
+		--lock-all-tables				锁死所有表
+		
+		--no-create-db		-t			只导出数据，不添加create table语句
+		--no-data			-d			不导出数据，只导出表结构
+		--protocol						指定连接协议
+		--tables						指定表
+		
+	# ex
+		标注：如果出现乱码，需要确认字符集是否统一（包括ssh远程工具设置成utf8字符集）
+		1. 备份所有数据库
+			mysqldump -uroot -pcentos --all-databases > /backup/mysqldump/all.db
+			
+			#==》适合MyISAM引擎
+			mysqldump -uroot -p'123456' --all-databases --flush-privileges  –-lock-all-tables \
+			--master-data=1 --flush-logs --triggers --routines --events \
+			--hex-blob > /opt/mysql_bak.sql
+			
+			#==》适合InnoDB引擎
+			mysqldump -uroot -p'123456' --all-databases --flush-privileges --single-transaction \
+			--master-data=1 --flush-logs --triggers --routines --events \
+			--hex-blob > /opt/mysql_bak.sql
+		2. 备份指定数据库 -- test
+			mysqldump -uroot -pcentos --databases test > /backup/mysqldump/test.db
+			
+			# 备份单个数据库
+			mysql -uroot -p'123456' -e "select * from testdb.student;"
+			
+			# 还原测试
+			[root@mysql ~]# mysql -uroot -p'123456' -e "drop table testdb.student;"
+			[root@mysql ~]# mysql -uroot -p'123456' -e "use testdb;show tables;"
+			#==》MySQL备份操作，必须指定testdb库名并且testdb库要在MySQL数据库存在
+			[root@mysql ~]# mysql -uroot -p'123456' testdb < /opt/mysql_bak.sql
+			[root@mysql ~]# mysql -uroot -p'123456' -e "use testdb;show tables;select * from student;"
+			
+			# 备份多个库
+				mysqldump -uroot -p'123456' --databases testdb testdb01 > /opt/mysql_bak_B.bak
+				# 恢复
+				mysql -uroot -p'123456' < /opt/mysql_bak_B.bak
+				
+		3. 备份指定数据库中的指定表（多个表以空格分开）-- mysql中的db和event表
+			mysqldump -uroot -pcentos --databases mysql --tables db event > /backup/mysqldump/two_tables.db
+			
+			
+		4. 备份数据库时排除某些表 -- 排除test库中t1和t2表
+			mysqldump -uroot -pcentos test --ignore-table=test.t1 --ignore-table=test.t2 > /backup/mysqldump/test2.db
+			
+		5. 压缩备份
+			mysqldump -uroot -p'123456' --databases test_db | gzip > /opt/mysql_bak_B.sql.gz
+			gunzip < /opt/mysql_bak_B.sql.gz | mysql -uroot -p'123456'
+			gunzip -c /opt/mysql_bak_B.sql.gz | mysql -uroot -p'123456'
+		6. 备份表结构
+			mysqldump -uroot -p'123456' -d testdb > /opt/testdb_bak.sql
+			mysqldump -uroot -pcentos --no-data --databases db1 >/tmp/db1.sql
+		7. 备份表数据
+			mysqldump -uroot -p'123456' -t testdb > /opt/testdb_bak_data.sql
+		8. 刷新binlog日志
+			[root@mysql ~]# vim /etc/my.cnf
+			log-bin=mysqlbin_log        #==》开启增量日志
+			
+			# 生成binglog文件
+				mysqldump -uroot -pcentos --databases db1 -F >/tmp/db1.test
+			mysqldump -uroot -p'123456' -A -B -F --events | gzip > /opt/mysql_backup.sql
+				-F --flush-logs 刷新binlog日志
+				--events 转存储事件,把events警告事件取消显示
+			mysqldump -uroot -p'123456' -A -B --master-data=1 --events | gzip > /opt/mysql_backup_master.sql
+				--master-data=1 不注释位置记录点信息
+				--master-data=2 注释
+# 还原
+	1. 系统命令
+		# 还原备份的指定数据库
+		mysqldump -uroot -pcentos create db_name
+		mysql -uroot -pcentos db_name < /backup/mysqldump/db_name.db
+		
+		或可以直接 -- 注意存在表时要确定对应数据库
+			mysql -uroot -pcentos < /backup/mysqldump/backup_name.db
+	2. source方法
+		mysql > use db_name
+		mysql > source /backup/mysqldump/db_name.db
+		
+		mysql > system ls -l /opt/mysql_bak.sql -- mysql中执行系统命令

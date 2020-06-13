@@ -1,0 +1,26 @@
+# Shell脚本开发环境配置
+	1. 使用vim -- 别名设置
+		echo 'alias vi=vim' >> /etc/profile
+		tail -1 /etc/profile
+		source /etc/profile
+	2. 配置文件.vimrc
+		-- 用户配置路径 ~/.vimrc
+		-- 全局路径 /etc/vimrc
+		注意，其内部的注释符号为"
+	3. vim路径配置
+		.viminfo -- 用户使用vim的操作历史
+		.vimrc -- 当前用户的配置文件
+		/etc/vimrc -- 系统全局vim的配置文件
+		/usr/share/vim/vim74/colors/ -- 配色模板文件存放路径
+	4. 让配置文件生效
+		退出ssh客户端重新登录
+	5. vim配置文件折叠功能
+		"zo  O-pen a fold   (打开折叠)
+		"zc  C-lose a fold  (关闭折叠)
+		"zf  F-old creation (创建折叠)
+		zf3j --- 将光标所在位置进行折叠
+		将光标放在对应折叠行，按空格键即可展开
+	6. 代码批量缩进
+		- 选中要缩进的行 -- 按=
+		:vs filename -- 垂直分屏
+		:sp filename -- 水平分屏

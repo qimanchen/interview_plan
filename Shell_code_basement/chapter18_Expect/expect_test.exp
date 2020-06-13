@@ -1,0 +1,7 @@
+#!/usr/bin/expect
+spawn ssh root@192.168.33.130 uptime # 执行ssh指令，开头必须有spawn
+
+expect "*password"	# 利用expect获取上述ssh命令输出字符串是否为期待的字符串
+
+send "centos\n" # 将获取到的期待字符串*password时，则发送密码给系统
+expect eof # 处理完毕结束

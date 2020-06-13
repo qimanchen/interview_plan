@@ -1,0 +1,12 @@
+# nginx http核心模块
+	error_page	指定error page
+		1. 语法
+			Syntax:	error_page code ... [=[response]] uri;
+			Default:	—
+			Context:	http, server, location, if in location
+		2. ex
+			error_page 404             /404.html;
+			error_page 500 502 503 504 /50x.html;
+		3. 可以重定向
+			error_page 403      http://example.com/forbidden.html;
+			error_page 404 =301 http://example.com/notfound.html; -- 将方http相应代码由404换成301

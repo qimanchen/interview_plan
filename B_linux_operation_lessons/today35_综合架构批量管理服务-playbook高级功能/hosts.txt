@@ -1,0 +1,49 @@
+# /etc/ansible/hosts
+# 1.分组配置
+[web]
+172.16.1.17
+172.16.1.18
+172.16.1.19
+
+[data]
+172.16.1.31
+172.16.1.41
+
+# 2. 主机名符号匹配配置
+[web]
+172.16.1[17:19]
+
+[web]
+web01 需要指定/etc/hosts
+
+# 3. 非标准远程端口
+[web]
+web01:52113
+
+# 4. 主机使用特殊变量信息 -- 没有分发公钥后
+[web]
+172.16.1.7 ansible_ssh_port=22 ansible_ssh_user=root ansible_ssh_pass=123456
+
+# 5. 指定主机名称
+# 主机名==主机的所在城市-机房信息-机房编号-机柜号-服务器功能
+[web]
+web01 ansible_host=172.16.1.7
+
+# 6. 主机嵌入式编写  -- 多个组需要共同的服务
+[rsync:children] --- 嵌入子组信息
+rsync_server
+rsync_clients
+
+[rsync_server]
+172.16.1.41
+[rsync_clients]
+172.16.1.31
+
+# 嵌入式变量的方式
+[web:vars]
+ansible_ssh_host=172.16.1.7 
+ansible_ssh_port=22 
+ansible_ssh_user=root 
+nsible_ssh_pass=123456
+[web]
+web01

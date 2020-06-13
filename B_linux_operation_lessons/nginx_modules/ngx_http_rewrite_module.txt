@@ -1,0 +1,81 @@
+# 
+	rewrite	
+		1. 语法
+			Syntax:	rewrite regex replacement [flag];
+			Default:	—
+			Context:	server, location, if
+			
+			regex -- 匹配URI
+			replacement -- 字符串
+				这个可以直接定位到站点目录中的指定文件
+					/index.html
+			flag 标记 -- 处理行为
+				last -- 本条规则匹配完成后，继续往下匹配其他location
+				break -- 本条规则匹配完，终止匹配
+				redirect -- 302
+				permanent -- 301
+			
+		2. ex
+				rewrite ^/(.*) http://www.oldboy.com/ permanent;
+	if
+		1. 语法
+			Syntax:	if (condition) { ... }
+			Default:	—
+			Context:	server, location
+		2. 几个常用的条件
+			-e !-e 判断文件or目录是否存在/不存在
+			~ 区分大小写匹配
+			~* 不区分大小写匹配
+		
+		2. ex
+			需求：访问localhost:81/shiyanlou124，然而对应的目录shiyanlou124不存在,那么就会404
+				那么需要重定向到index.html文件中
+			server {
+				listen 81;
+				root /home/shiyanlou/html;
+				PS： 没有定义server_name 默认为 localhost
+				# location 也可以使用正则表达式
+				# 这里的含义是：区分大小写匹配以 /shiyanlou 开头，后跟任意多个单字符的 URI
+				location ~ /shiyanlou.* {
+					rewrite "^/shiyanlou([0-9]{3})" /shiyanlou/$1 last;
+					# $request_filename 是 Nginx 内置的变量
+					# 表示请求的路径或文件
+					if (!-e $request_filename) {
+						rewrite ^/(.*)$ /index.html permanent;
+					}
+				}
+			}
+	return
+		1.语法
+			return code;
+			server,location,if
+		2. ex
+			需求：当访问站点目录的test目录时，直接返回403
+			location = /test {
+				return 403;
+			}
+	break
+		1. 语法
+			break;
+			server,location,if
+		2. ex
+			需求：如果访问的文件存在，则不进行重定向
+			sever {
+				listen 81;
+				root /home/shiyanlou/html;
+				location ~ /shiyanlou.* {
+					if (-e $request_filename) { 
+						break; 
+					}
+					rewrite "^/shiyanlou([0-9]{3})" /shiyanlou/$1 last;
+					if (!-e $request_filename) {
+						rewrite ^/(.*)$ /index.html permanent;
+					}
+				}
+				location = /test {
+					rerurn 403;
+				}
+			}
+			
+			
+

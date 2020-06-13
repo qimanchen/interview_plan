@@ -1,0 +1,3 @@
+## /etc/exports
+/data	172.16.1.0/24(rw,sync)
+/data	10.0.2.0/24(rw,sync)

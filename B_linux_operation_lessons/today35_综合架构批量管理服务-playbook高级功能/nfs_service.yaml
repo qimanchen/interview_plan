@@ -1,0 +1,53 @@
+- hosts: nfs
+  gather_facts: no
+  # 尝试nfs相关主机的公共的变量 -- 并不能这样执行
+  vars:
+    Data_dir: /data
+  tasks:
+    - name: 01-install nfs software
+      yum:
+        name: ['nfs-utils', 'rpcbind']
+        state: installed
+
+- hosts: nfs_server
+  # 私有变量
+  vars:
+    Data_dir: /data
+  tasks:
+    - name: 01-copy conf file
+      copy: src=/etc/ansible/ansible_playbook/nfs-file/nfs-server/exports dest=/etc
+      # 修改了配置文件，进行服务的重启
+      notify: restart nfs service
+    - name: 02-create data dir
+      # 可能存在多个存储目录
+      file: path={{ Data_dir }} state=directory owner=nfsnobody group=nfsnobody
+      # file:
+        # path=['data01', 'data02', 'data03']
+        # state: directory
+        # owner: nfsnobody
+        # group: nfsnobody
+    - name: 03-boot server
+      # service: name=rpcbind state=started enabled=yes
+      # service: name=nfs state=started enabled=yes
+      service: name={{ item }} state=started enabled=yes
+      with_items:
+        - rpcbind
+        - nfs
+  handlers:
+    - name: restart nfs service
+      service: name=nfs state=restarted
+
+- hosts: nfs_client
+  vars:
+    Data_dir: /data
+  tasks:
+    - name: 01-mount
+      mount: src=172.16.1.31:{{ Data_dir }} path=/mnt fstype=nfs state=mounted
+      # 是否开机自动挂载
+      # centos6 netfs
+      # centos7 remote-fs
+    - name: 02-check mount info
+      shell: df -h| grep /data
+      register: mount_info
+    - name: display mount info
+      debug: msg={{ mount_info.stdout_lines }}

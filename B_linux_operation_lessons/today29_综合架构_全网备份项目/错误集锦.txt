@@ -1,0 +1,15 @@
+# 调试服务端的备份脚本时的错误
+[root@backup /]# sh /server/scripts/server_backup.sh
+md5sum: /backup/172.16.1.17/system_backup_2020-04-19_week0.tar.gz: no properly formatted MD5 checksum lines found
+md5sum: /backup/172.16.1.17/www_backup_2020-04-19_week0.tar.gz: no properly formatted MD5 checksum lines found
+md5sum: /backup/172.16.1.17/www_log_backup_2020-04-19_week0.tar.gz: no properly formatted MD5 checksum lines found
+	# 导致的原因 
+		find $Backup_file/ -type f -name "finger.txt" | xargs md5sum -c &>/tmp/check.txt
+		没有找到相应的MD5对比文件
+
+# 脚本错误
+	[root@web01 ~]# sh /server/scripts/client_backup.sh 
+	/server/scripts/client_backup.sh: line 12: [: /backup/172.16.1.17: unary operator expected
+	
+	导致原因 if [ -e .. ] 此判断参数应该位于文件名之前
+

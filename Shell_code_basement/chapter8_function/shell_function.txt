@@ -1,0 +1,114 @@
+# shell函数
+	1. 函数概念和作用
+		作用 -- 让程序更易读、易改、易用
+			- 模块化
+	2. shell函数的语法格式
+		function 函数名() {
+			指令..
+			return n
+		}
+		function -- 声明一个函数
+	3. shell函数的执行
+		PS:执行函数说明
+			1.执行时，只需要函数名即可
+			2. 函数定义必须在使用前
+			3. shell中执行顺序：系统别名 -- 函数 -- 系统命令 -- 可执行文件
+			4. 函数可以设定局部变量和特殊位置参数
+			5. return退出函数
+			6. 加载脚本，需要通过 source来加载
+			7. 函数内通过local定义局部变量，变量在函数执行完毕后消失
+		- 函数执行
+			函数名
+			函数名 参数1 参数2
+				1. 父脚本的参数会被函数的参数掩盖
+				2. $0 表示父脚本的名称
+				3. 函数的参数变量是在函数体中定义的
+				
+		- 基本函数
+			
+		- 传参函数
+			func para1 para2 ...
+	4. shell函数实践
+		-- 从文件中导入函数，的判断操作
+		[ -f ./functions/echo_qiman.func ] && . ./functions/echo_qiman.func || exit 1
+	5. url检测脚本
+		main $* -- 将主体脚本的参数传递给main函数
+	6. 一键优化脚本
+		优化目标
+			1. 安装时精简安装
+			2. 配置国内镜像源
+				mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repo.d/CentOS-Base.backup &&\
+				wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-6.repo
+			3. 禁用开机不用的服务
+				-- centos7 -- systemctl list-unit-files | grep enable
+				chkconfig | awk '{print "chkconfig", $1, "off"}'|bash
+				chkconfig | egrep "crond|sshd|network|rsyslog|sysstat" | awk '{print "chkconfig",$1,"on"}' |bash
+				export LANG=en
+				chkconfig --list | grep 3:on
+			4. 优化系统内核参数/etc/sysctl.conf
+				cat >>/etc/sysctl.conf<<EOF
+				net.ipv4.tcp_fin_timeout = 2
+				net.ipv4.tcp_tw_reuse = 1
+				net.ipv4.tcp_tw_recycle = 1
+				net.ipv4.tcp_syncookies = 1
+				net.ipv4.tcp_keepalive_time = 600
+				net.ipv4.ip_local_port_range = 4000    65000
+				net.ipv4.tcp_max_syn_backlog = 16384
+				net.ipv4.tcp_max_tw_buckets = 36000
+				net.ipv4.route.gc_timeout = 100
+				net.ipv4.tcp_syn_retries = 1
+				net.ipv4.tcp_synack_retries = 1
+				net.core.somaxconn = 16384
+				net.core.netdev_max_backlog = 16384
+				net.ipv4.tcp_max_orphans = 16384
+				#以下参数是对iptables防火墙的优化，防火墙不开，会有提示，可以忽略不理。
+				net.nf_conntrack_max = 25000000
+				net.netfilter.nf_conntrack_max = 25000000
+				net.netfilter.nf_conntrack_tcp_timeout_established = 180
+				net.netfilter.nf_conntrack_tcp_timeout_time_wait = 120
+				net.netfilter.nf_conntrack_tcp_timeout_close_wait = 60
+				net.netfilter.nf_conntrack_tcp_timeout_fin_wait = 120
+				EOF
+				Sysctl -p
+				yum update -y
+				yum install lrzsz nmap tree dos2unix nc -y
+			5. 增加系统文件描述符、堆栈等配置
+				echo '*		- 	nofile		65535' >> /etc/security/limits.conf
+				tail -1 /etc/security/limits
+			6. 禁用root远程登录，修改ssh端口为特殊端口，禁止dns和空密码
+			7. 有外网ip的机器要开启、配置防火墙，仅对外开启需要提供服务的端口，配置或关闭SELinux
+				sed -i.bak 's/SELINUX=enforcing/SELINUX=disabled/' /etc/selinux/config
+				grep SELINUX=disable /etc/selinux/config
+				setenfore 0
+				getenfore
+				
+				# 关闭iptables
+					/etc/init.d/iptables stop
+					/etc/init.d/iptables stop 
+					chkconfig iptables off
+				
+			8. 清除无用的默认系统账户或用户组（非必须）（添加运维成员用户)
+			9. 锁定敏感文件,如/etc/passwd (非必须)
+			10. 配置服务器和互联网时间同步
+				echo '#time sync by oldboy at ' >> /var/spool/cron/root
+				echo '*/5 * * * * /usr/sbin/ntpdate time.nist.gov &> /dev/null >> /var/spool/cron/root
+				crontab -l
+			11. 初始化用户，并配置sudo对普通用户权限的控制
+				useradd oldboy
+				echo centos | passwd --stdin oldboy
+				\cp /etc/sudoers /etc/sudoers.ori
+				echo "oldboy ALL=(ALL) NOPASSWD: ALL " >> /etc/sudoers
+				tail -1 /etc/sudoers
+				visudo -c
+			12. 修改系统字符集
+				cp /etc/sysconfig/i18n /etc/sysconfig/i18n.ori
+				echo 'LANG="zh_CN.UTF-8"' > /etc/sysconfig/i18n
+				source /etc/sysconfig/i18n
+				echo $LANG
+			13. 补安装系统软件以及升级到最新
+			14. 命令行安全
+				#echo 'export TMOUT=300' >>/etc/profile
+				#echo 'export HISTSIZE=5' >>/etc/profile
+				#echo 'export HISTFILESIZE=5' >>/etc/profile
+				#tail -3 /etc/profile
+				#. /etc/profile

@@ -1,0 +1,7 @@
+# roles_site.yml
+- hosts: nfs_server
+  roles:
+    - nfs-server
+- hosts: nfs_clients
+  roles:
+    - nfs-client

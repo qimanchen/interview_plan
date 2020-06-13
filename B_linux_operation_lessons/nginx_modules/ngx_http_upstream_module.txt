@@ -1,0 +1,175 @@
+# ngx_http_upstream_module
+
+# 说明
+	定义服务集群
+	
+# 配置样例
+	upstream backend {
+		server backend1.example.com       weight=5;
+		server backend2.example.com:8080;
+		server unix:/tmp/backend3;
+
+		server backup1.example.com:8080   backup;
+		server backup2.example.com:8080   backup;
+	}
+
+	server {
+		location / {
+			proxy_pass http://backend;
+		}
+	}
+# 相关指令
+	- upstream
+		# 语法
+			Syntax:	upstream name { ... }
+			Default:	—
+			Context:	http
+		# 描述
+			定义一个服务器集群；
+			每个服务器可以监听不同的端口；
+			可以混合监听服务器上的TCP和UNIX sockets
+		# 示例
+			upstream backend {
+				server backend1.example.com weight=5;
+				server 127.0.0.1:8080       max_fails=3 fail_timeout=30s;
+				server unix:/tmp/backend3;
+
+				server backup1.example.com  backup;
+			}
+		# 其他说明
+			默认服务器之间是通过轮询来选择目标主机的
+			如果某个服务器出现故障，那么会访问另外一台服务器
+			访问错误时，返回的是遍历到最后一台服务器时的通信结果
+	- server  -- 定义服务器的地址和其他相关参数
+		# 语法
+			Syntax:	server address [parameters];
+			Default:	—
+			Context:	upstream
+		# 注意
+			1. 如果没有指定端口，默认为80端口
+		# parameters
+			weight = number # 设置服务器权重，默认为1
+			max_conns = number # 限制最大连接数, 默认为0，表示没有限制，即为nginx服务的连接数限制
+			max_fails = number # 最大错误连接数
+			fail_timeout = time # 错误重连时间，默认为10s
+			backup # 设置服务器为备份服务器
+			down # 设置服务器下线
+			resolve # 必须在http区域或upstream区域
+			route = string # 设置服务路由名称
+			service = name # 
+				_http._tcp.backend.example.com
+				server backend.example.com service=http resolve;
+			slow_start = time # 服务延时，这个参数不能与hash和ip_hash混用
+		# 如果集群中只有一台server，那么max_fails, fail_timeout,slot_start 忽略
+	- zone -- 
+		# 语法
+	- hash
+		# 语法
+			Syntax:	hash key [consistent];
+			Default:	—
+			Context:	upstream
+		# 说明
+			设定一个hash值
+	- ip_hash
+		# 语法
+			Syntax:	ip_hash;
+			Default:	—
+			Context:	upstream
+		# 负载均衡方法，保证指定ip的用户的后端服务器
+			IPv6在1.3.2 - 1.2.2支持
+		# 示例
+			upstream backend {
+				ip_hash;
+
+				server backend1.example.com;
+				server backend2.example.com;
+				server backend3.example.com down;
+				server backend4.example.com;
+			}
+	- keepalive 
+		# 说明
+			总的缓存连接数限制，如果超了会关闭最近连接最少的连接
+		# 语法
+			Syntax:	keepalive connections;
+			Default:	—
+			Context:	upstream
+			This directive appeared in version 1.1.4.
+		# 示例
+			upstream memcached_backend {
+				server 127.0.0.1:11211;
+				server 10.0.0.2:11211;
+
+				keepalive 32;
+			}
+
+			server {
+				...
+
+				location /memcached/ {
+					set $memcached_key $uri;
+					memcached_pass memcached_backend;
+				}
+
+			}
+	- keepalive_requests
+		# 说明
+			最大连接请求数，如果超了关闭连接
+		# 语法
+			Syntax:	keepalive_requests number;
+			Default:	
+			keepalive_requests 100;
+			Context:	upstream
+			This directive appeared in version 1.15.3.
+	- keepalive_timeout
+		# 说明
+			空闲长连接超时时间
+		# 语法
+			Syntax:	keepalive_timeout timeout;
+			Default:	
+			keepalive_timeout 60s;
+			Context:	upstream
+			This directive appeared in version 1.15.3.
+	- least_conn
+		# 说明
+			负载均衡算法，最小连接数
+		# 语法
+			Syntax:	least_conn;
+			Default:	—
+			Context:	upstream
+			This directive appeared in versions 1.3.1 and 1.2.2.
+	- queue
+		# 说明
+			当请求不被upstream中的服务器处理时，则添加到队列中
+			队列满了，或在timeout时间内没有响应 -- 502错误
+			- 默认超时时间为60s
+			- 当使用的不是轮询方法时，侧必须在方法前设置queue
+		# 语法
+			Syntax:	queue number [timeout=time];
+			Default:	—
+			Context:	upstream
+			This directive appeared in version 1.5.12.
+	- random
+		# 语法
+			Syntax:	random [two [method]];
+			Default:	—
+			Context:	upstream
+			This directive appeared in version 1.15.1.
+		# 说明
+			负载均衡方法，根据服务器权重，随机选取server
+	- resolver
+		# 语法
+			Syntax:	resolver address ... [valid=time] [ipv6=on|off] [status_zone=zone];
+			Default:	—
+			Context:	upstream
+			This directive appeared in version 1.17.5.
+	- 额外的一些参数
+		$upstream_addr # 保持upstream server
+		$upstream_bytes_received # 从upstream server接收的数据的大小
+		$upstream_bytes_sent # 发送的数据大小
+		$upstream_cache_status # 保存响应的缓存状态
+		$upstream_connect_time # 连接服务器的时间
+		$upstream_cookie_name # 在Set-Cookie响应头中设置cookie名称
+		$upstream_header_time # 保存从server接收响应的时间 几秒到几毫秒
+		$upstream_http_name # 保存server响应头字段
+			通过前缀$http_获取
+		

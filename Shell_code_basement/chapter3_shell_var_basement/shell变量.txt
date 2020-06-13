@@ -1,0 +1,136 @@
+# Shell变量的核心基础知识与实践
+	1. 什么是Shell变量
+		qiman="I am qiman" -- 变量的定义
+		echo ${qiman} -- 打印变量的值
+		shell为弱语言类型
+		declare可以定义变量的类型
+		- 环境变量
+			
+		- 局部变量
+	2. 环境变量
+		export导出的变量
+		- 在.bash_profile或.bashrc中配置
+		- 全局配置/etc/bashrc，或/etc/profile文件中配置
+		- 变量名称为全部大写
+		- export QIMAN=Great
+	3. 一些常用环境变量
+		GROUPS -- 当前用户所属组
+		HISTFILESIZE -- 历史命令文件最大行数
+		HISTSIZE -- 记录在历史文件中命令行数
+		HOME -- 当前用户家目录
+		HOSTNAME -- 当前主机名称
+		LANG -- 字符集
+		MAIL -- 邮箱路径
+		PATH -- 命令搜索路径
+		
+		PS1 -- 主提示符
+		PS2 -- 次提示符
+		SHELL -- 登录shell类型
+	4. 一些查看设置变量的命令
+		- 查看
+			set -- 输出所有变量（全局+局部）
+				set -o 命令显示 bash Shell所有参数配置信息
+			env -- 只显示全局
+			declare -- 输出所有的变量、函数、整数和已导出的变量
+		- 设置环境变量
+			export 变量名=value
+			变量名=value; export 变量名
+			declare -x 变量名=value
+			- 环境变量永久生效
+				1）用户的配置文件,$HOME/.bashrc -- 推荐
+					$HOME/.bash_profile
+				2）全局环境变量配置
+					/etc/profile
+					/etc/bashrc -- 推荐
+					/etc/profile.d/
+				登录后初始化，将脚本文件放置在/etc/profile.d/文件中，脚本文件无需加执行权限
+			- 设置登录提示的两种方式
+				1）/etc/motd中添加提示字符串
+				2）在/etc/profile.d/中添加如下脚本
+					qiman.sh
+						echo " Here is qiman hosts"
+				- Java -- 放置在/etc/profile文件中
+					export JAVA_HOME=/application/jdk
+					export CLASSPATH=$CLASSPATH:$JAVA_HOME/lib:$JAVA_HOME/jre/lib
+					export PATH=$JAVA_HOME/bin:$JAVA_HOME/jre/bin:$PATH:$HOME/bin
+					export RESIN_HOME=/application/resin
+		- 显示或取消环境变量
+			- 显示
+				echo or printf
+					echo $HOME
+					printf "$HOME\n"
+				env -- 显示默认环境变量
+				set -- 显示所有变量
+			- 取消 -- unset
+				unset 变量名
+			- 定时任务中最好在脚本中重新定义全局变量
+	5. 环境变量小结
+		1）变量名通常大写
+		2）变量名可以在自身shell及子shell中使用
+		3）常用export定义环境变量
+		4）执行env显示所有环境变量
+		5）输出变量名echo $var_name，取消 unset var_name
+		6）crond定时任务，脚本要用到的环境变量在shell脚本中重新定义
+		7）若想使环境变量永久生效，将其放置到用户或全局环境变量文件中
+	6. 环境变量初始化和生效顺序
+		- 登录shell的三种形式
+			1）通过系统用户登录的默认运行Shell
+				/etc/profile --> ~/.bash_profile --> 操作Shell
+						|				|
+						|				|->	~/.bashrc
+						|						|
+						|->	/etc/profile.d/*.sh <--/etc/bashrc
+								|
+							/etc/sysconfig/i18n
+			2）非登录交互式Shell
+				只会加载~/.bashrc, 然后找/etc/bashrc文件
+			3）执行脚本运行非交互式Shell
+	7. 普通变量
+		1）定义本地变量
+			- 当前Shell生存期
+			变量名=value
+		2）变量名要求
+			字母 + 数字 + 下划线
+			不能是数字开头
+		- 提示：
+			$变量名，输出时，可以使用$c ${c}两种
+		- 一些示例：
+			- 连续变量
+				a=192.168.1.2
+				b='192.168.1.2'
+				c="192.168.1.2"
+				echo "a=$a"
+				echo "b=$b"
+				echo "c=${c}"
+				不管是否用引号，还是不用，内容是啥就会输出啥
+			- 单引号会屏蔽变量引用
+		- 定义变量方式
+			1）不加引号
+				a = 192.168.1.2-$a --连续数字，字符串，路径
+			2）加单引号
+				a = '192.168.1.2-$a' -- 适合字符
+			3）加双引号
+				a = "192.168.1.2-$a" -- 输出内容中会解析变量
+			- 需要原样输出，加单引号
+			- 其他加上双引号
+		- 将命令执行结果作为变量值
+			变量名=`ls`
+			变量名=$(ls)
+			date +"%H:%M %Y-%m-%d"
+		- 普通变量小结
+			1）若变量为数字或字符串，变量内容可以不加引号
+			2）变量内容很多且有空格和变量需要解析，使用双引号
+			3）希望变量内容原样输出，使用单引号
+			4）可以使用printf定义出更为复杂的输出方式
+			5）当变量之前有其他字符时，如$dbname_tname,必须个变量加上{}
+		- 脚本中定义变量，使用双引号括起对应的内容
+		- 数字可以不加引号
+		- 注意awk对于双引号具有特殊情况
+			-- 系统变量使用单引号括起来
+			awk使用变量时，通过echo输出，然后通过管道传递给awk
+			[root@m01 ~]# awk 'BEGIN{print "${USER}"}'
+			${USER}
+			[root@m01 ~]# awk 'BEGIN{print "'${USER}'"}'
+			root
+
+			

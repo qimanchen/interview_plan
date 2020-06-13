@@ -1,0 +1,60 @@
+# Shell脚本入门
+	- Shell脚本，命令、变量和流控制语句的结合
+	- 清除一个文件
+		/dev/null > messages
+	- 可以通过代码块来执行相应的多个动作
+		echo ${SHELL} && { echo "test";echo "test2"}
+	- 通过查看
+		cat /etc/shells -- 确认当前系统支持的shell
+	- bash 和sh还是有些区别的，当在sh上执行错误时，尝试使用bash来执行
+	- 查看当前系统默认shell
+		echo $SHELL
+		grep root /etc/passwd
+	- 设置别名变量
+		1）echo "alias vi='vim'" >> /ect/profile
+		2) 查看是否设置正确，tail -1 /etc/profile
+		3) 使设置生效，source /etc/profile
+	1. Shell脚本的建立和执行
+		1）shell脚本的建立
+			#! -- 幻数 -- 确定解释器 -- 必须为脚本的第一行
+		- 查看bash版本
+			cat /etc/redhat-release
+			bash --version
+		- 检测系统是否存在bash漏洞
+			env x='() { :;}; echo be careful' bash -c "echo this is a test"
+			
+			若返回为,则表明漏洞存在
+				be careful
+				this is a test
+			若返回为，则不用升级
+				this is a test
+		- 升级bash
+			yum -y update bash
+			rpm -qa bash
+		- 几种脚本文件头
+			#!/bash/sed
+			#!/usr/bin/awk
+			#!/usr/bin/expect
+			#!/usr/bin/env python
+		- 执行脚本
+			bash test.sh
+			python test.py
+		- 脚本注释
+			#
+		- 脚本执行顺序
+			- 从上到下，从左到右
+			- 当shell脚本遇到子脚本，会优先执行子脚本
+	PS：设置crond任务时，最好在定时任务脚本中重新定义系统的环境变量
+		- 脚本执行方法
+			bash test.sh
+			./test.sh，执行脚本需要有执行权限
+			source test.sh 脚本在当前shell程序中运行，该执行方式可以影响当前shell，即不是产生子shell执行
+			sh<test.sh or cat test.sh | sh
+		- cat
+			cat > test.sh
+			ctrl+d 结束输入
+		- 脚本引用
+			source 要引用的脚本
+		- 子脚本会继承父脚本，但要使子脚本中变量传到父脚本需要source
+			
+		

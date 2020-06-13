@@ -1,0 +1,13 @@
+# centos virtualBox虚拟机设置网卡
+	1. 在virtualBox上添加一块nat网卡和一块host-only网卡
+	2. 在网卡配置时，添加两块网卡
+	3. 在虚拟机中配置 
+		/etc/sysconfig/network-scripts/ifcfg-eth0
+		/etc/sysconfig/network-scripts/ifcfg-eth1
+	测试：
+		ping www.baidu.com
+		route -n 查看路由是否正确，主要看网关
+	ps：注意centos6如果两块网卡都设置gateway，会以eth1的为准
+		所以最好只nat的eth0设置gateway
+		可以通过rount -n 来查看
+		

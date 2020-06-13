@@ -1,0 +1,10 @@
+# 当存在vpn时，连接不到服务器
+	1. 添加路由表
+		ip route add 0/0 via 10.0.0.254 table test
+			10.0.0.254 
+	2. 修改路由表文件
+		/etc/iproute2/rt_tables
+			添加该内容200 test 
+	3. 为该路由表添加规则
+		ip rule add from  10.0.0.1 table test -- 走test表
+			10.0.0.1 为对应的公网的IP

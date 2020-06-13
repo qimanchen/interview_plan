@@ -1,0 +1,33 @@
+# synchronization
+# 测试环境
+	批量管理服务器：172.16.1.61
+	被管理服务器：172.16.1.31，172.16.1.41
+
+# playbook
+---
+- hosts: 172.16.1.31
+  tasks:
+    - name: backup file from 172.16.1.31 to 172.16.1.41
+      synchronize:
+        src: /etc/hosts
+        dest: rsync://rsync_backup@172.16.1.41/backup
+        rsync_opts: "--password-file=/etc/rsync.password"
+...
+# playbook说明：将172.16.1.31上的/etc/hosts 文件备份到172.16.1.41系统文件上
+# 要解决的问题
+	实现rsync 的用户自动认证，即rsync_backup用户认证
+	
+# 错误信息
+fatal: [172.16.1.31]: FAILED! => {"changed": false, "cmd": "/usr/bin/rsync --delay-updates -F --compress --archive --password-file=/etc/rsync.password --out-format=<<CHANGED>>%i %n%L /etc/hosts rsync://rsync_backup@172.16.1.41/backup", "msg": "ERROR: password file must not be other-accessible\nrsync error: syntax or usage error (code 1) at authenticate.c(196) [sender=3.1.2]\n", "rc": 1}
+
+# 错误详述
+显示rsync所的/etc/rsync.password文件权限不正确
+经过检查，172.16.1.31,即inventory host 上的对应的文件是正确的
+
+# 坑
+synchronization 的rsync_opts参数中读取的文件是起始是批量管理主机上的文件
+即172.16.1.61 上的/etc/rsync.password
+
+# 错误解决
+将172.16.1.61上的/etc/rsync.password 的权限修改为600
+chmode 600 /etc/rsync.password

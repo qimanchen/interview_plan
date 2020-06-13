@@ -1,0 +1,58 @@
+# ip命令以及route命令总结
+	1. route -- 显示并设置网络路由表，设置路由为静态路由
+		PS: route添加的路由不会永久保存，若想永久保存需要添加到*/etc/rc.local中添加相应的route指令
+		命令格式
+			route 选项 参数
+				- 选项
+					-n 不执行dns反向解析，直接显示ip
+				- 参数
+					add 增加指定路由记录
+					del 删除
+					target 目标网络
+					gw 设置默认网关
+					mss
+					window 设置tcp窗口大小
+					dev 路由记录中所表示的网络接口
+			- 实例
+				1）显示路由
+					route -n
+				2）设置默认网关
+					route add default gw 192.168.1.1
+					route del default gw 192.168.1.1
+	2. arp -- 缓冲区
+		arp 选项 主机
+		arp -a
+		arp -v  显示详细的arp表
+	3. ip
+		- 语法： ip 选项 对象 指令
+		- 对象
+			link 网络设备
+			address 设备上的协议地址
+			addrlable 协议地址标签配置
+			route 路由表条目
+			rule 路由策略规则
+		- 选项
+			-V 显示指令的版本信息
+			-s 输出详细信息
+			-h 以人易读的方式显示
+			-o 每条记录一行，使用\替换换行符
+		- 日常常用功能
+			1）显示网卡即配置信息
+				ip addr show
+			2）设置ip
+				ip addr add 192.168.0.123/24 dev eth0 -- 可以为单网卡，添加多ip
+			3）删除ip
+				ip addr del 192.168.0.123/24 dev eth0
+			4）启用/禁用网卡
+				ip link set eth0 up
+				ip link set eth0 down
+			5）路由配置
+				ip route show -- 显示路由
+				ip route get 119.75.216.20 -- 通过ip地址查询路由包从那条路由来
+				ip route add default via 192.168.0.150/24 所有网络数据包通过192.168.0.150转发，而不是默认路由
+				ip route add 172.16.32.32 via 192.168.0.150 dev eth3 修改指定网卡的默认路由
+				ip route del 172.16.160.0/20 删除路由
+			6）显示网路统计数据
+				ip -s link 显示所有网卡接口的统计数据
+				ip -s -s link ls eth0 多个-s会输出指定接口的详细信息，在特定网络接口后面添加ls
+				

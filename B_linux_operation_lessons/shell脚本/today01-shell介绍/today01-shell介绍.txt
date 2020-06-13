@@ -1,0 +1,39 @@
+# Secure CRT -- 安装
+	CRT -- 进入密码 qiman
+	epub文件转pdf -- https://link.zhihu.com/?target=https%3A//www.onlineconverter.com/epub-to-pdf
+# 安装cacti流量监测
+
+# 课程内容
+	1. shell需要的基本知识
+		grep -R string ./ -- 找到目录下所有含有string字符的文件
+		vim
+			3,5s/^/#/g --- 在前面加注释
+			dw 删除单个字符
+		三剑客 grep awk sed
+			sed -
+	2. 如何需要shell编程
+		环境变量 条件表达式 if判断 for循环 while循环 case语句 数组 条件控制语句
+		1） 能够读懂脚本
+		2）针对脚本进行修改 添加各种语句判断等
+		3）需要一本教材
+			Unix/linux系统管理技术手册
+	3. Shell入门
+		1）什么是shell
+			命令解释器，负责翻译我们输入的命令，执行成功后返回给用户
+			交互式：用户输入命令，系统返回一个结果
+			非交互式：不与用户进行交互，执行文本中的内容
+		2）什么是shell脚本
+			命令集合 命令大礼包 很多可执行命令放在文本中称为shell脚本
+	4. Shell脚本规范（为自动化准备）
+		1）必须放置在同一目录
+		2）文件名必须以.sh结尾
+		3）脚本开头有注释#!/bin/bash 必须是第一行 以外的都是注释
+		4）脚本的注释信息 Author  Time functions 个人信息 代码块的注释
+		5）建议注释使用英文
+		6）成对的符号一次性写完
+			for
+			while
+			if
+		7）脚本名称的命名 -- 见名只其意
+	
+		

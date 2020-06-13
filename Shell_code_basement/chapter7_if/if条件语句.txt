@@ -1,0 +1,75 @@
+# if条件语句
+	1. if条件语句
+		1）语法
+			-- 单分支
+				if conditions
+					then
+				fi
+			-- 嵌套
+			-- 双分支
+				if conditions; then
+					...
+				else
+					...
+				fi
+			-- 多分支
+				if condition1; then
+					...
+				elif codition2; then
+					.
+					.
+				else
+					...
+				fi
+		2）语法表达式
+			if test 表达式
+			
+			if [ 表达式 ]
+			
+			if [[ ]] 
+			if 命令
+	2. 应用
+		1）监控web和数据库
+			-- web服务和mysql数据库用户是否异常的方法
+				a 端口检测
+					本地 netstat ss lsof
+						netstat -lnt | grep 3306 |awk -F "[ :]+" '{print $5}' -- 容易出错
+						ss/netstat -tunlp | grep 3306 | wc -l
+						ss/netstat -tunlp | grep mysql | wc -l
+						lsof -i tcp:3306|wc -l
+					远端 telnet nmap nc
+						[ `rpm -qa nc|wc -l` -lt 1 ] && yum install nc -y &>/dev/null -- 防止nc未安装
+						nmap 127.0.0.1 -p 3306 2>/dev/null | grep open | wc -l
+						echo -e  "\n" | telnet 127.0.0.1 3306 2>/dev/null | grep Connected|wc -l
+						nc -w 2 127.0.0.1 3306 &> /dev/null
+						
+				b 服务进程或进程数
+					ps -ef|grep nginx|wc -l
+					ps -ef|grep mysql|wc -l
+					ps -ef|grep mysql | grep -v grep | wc -l
+					
+				c 客户端模拟访问
+					wget 或curl命令
+						- 返回值 echo $?
+						- 获取特殊字符串进行判断
+						- 根据HTTP响应header的情况进行判断
+						wget --spider --timeout=10 --tries=2 www.baidu.com &>/dev/null
+							--spider 模拟爬取
+							查看返回值，echo $?
+						wget -T 10 -q --spider http://www.baidu.com &> /dev/null
+						curl -s -o /dev/null http://www.baidu.com
+							-s slient
+						curl http://127.0.0.1 -- 获取指定字符串
+						curl -I -s -w "%{http_code}\n" -o /dev/null http://127.0.0.1 -- 获取访问状态码
+							200 301 302
+						if [[ `curl -I -s -o /dev/null -w "%{http_code}\n" http://127.0.0.1` =~ [23]0[012] ]]
+				d 登录mysql客户端连接数据库，根据返回值进行判断
+					mysql -uroot -pcentos -e "select version();" &> /dev/null; echo $?
+		2）判断字符是否是数字
+		3）判断字符长度是否为0
+			[ -z "oldboy" ]
+			[ ${#char} -eq 0 ]
+			[ `expr length "oldboy"` -eq 0 ]
+			[ `echo oldboy |wc -L` -eq 0 ]
+			[ `echo oldboy|awk '{print length}'` -eq 0 ]
+		

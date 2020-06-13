@@ -1,0 +1,34 @@
+# shell脚本调试
+	1. 常见错误
+		1) if for while case 缺少关键字
+		2）符号未成对
+		3）判断的中括号两端没得空格
+	--- 思考框架，模块化
+	
+	2. 调试技巧
+		1) windows下编辑的脚本，需要dos2unix处理（换行符）
+			cat -v test.sh
+			dos2unix test.sh
+			yum install dos2unix -y
+		2. 在出现问题的地方加入echo命令，并且紧跟着exit
+		3. bash命令调试
+			bash
+				-n 不执行脚本，仅查询脚本语法是否有问题，并给出语法提示
+				-v 执行脚本时，将脚本内容打印
+				-x 将执行脚本内容打印输出到屏幕
+			PS4 -- shell脚本调试时提示符
+				可以修改
+					PS4='+${LINENO}' -- 添加行号
+		4. 使用set命令调试部分脚本内容
+			set -n 读命令，但不执行
+			set -v 显示读取的所有行
+			set -x 显示所有命令及其参数
+				set -x 可以缩小调试作用域
+			---
+				set -x 开启调试
+					代码
+				set +x 结束调试
+		5. shell脚本调试工具
+			bashdb
+			shellcheck
+			

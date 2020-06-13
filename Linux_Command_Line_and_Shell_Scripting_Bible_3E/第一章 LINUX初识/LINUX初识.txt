@@ -1,0 +1,78 @@
+# LINUX初识
+	1. Linux相关介绍
+		LiveCD -- 样本系统
+	2. Linux命令行
+		-- 设置终端背景色为白色，文本为黑色
+			方法一：
+				setterm -inversescreen on
+			方法二：
+				setterm -background white
+				setterm -foreground black
+			参数：
+				-inversescreen 交换前景和背景
+				-background 设置某个颜色为背景
+				-foreground 设置某个颜色为前景
+				-reset 恢复默认设置
+				-store 恢复默认设置之前的一个设置
+			共有8中颜色可调
+				black red green yellow blue magenta cyan white
+	3. 基本bash shell 命令
+		/etc/passwd -- 用户账户列表
+		man 手册 -- 第一段 和DESCRIPTION部分的前两段
+		man 1 hostname -- 可能一个命令是有多部分组成，通过指定那区域，来查看不同的区域介绍
+		--help
+		info
+		--- 虚拟目录 -- FHS
+		--- cd
+		--- pwd
+	4. 进程等相关命令
+		ps
+		top
+		进程之间通过信号来实现通信
+		Linux进程信号：
+			1	HUP		挂起
+			3	QUIT 	结束运行
+			9	KILL	无条件终止
+			15	TERM	尽可能终止
+		kill
+		killall
+	5. 认识shell
+		-- 交互式程序
+		-- 创建用户时指定了对应用户登录时，使用的shell程序
+			/etc/passwd中最后一项
+		-- /bin/sh 系统默认shell
+		-- bash shell 的两种不同shell注意区分使用
+		-- dash or /bin/dash 启动一个shell，exit退出shell程序
+		-- ps -f 确认子父shell关系
+		-- bash 命令行参数
+		-- 进程列表
+			pwd; ls; cd /etc; pwd 多个命令依序执行
+			(pwd; ls; cd /etc; pwd)进程列表，生成一个子shell来执行命令 -- 命令分组
+			{pwd; ls; cd /etc; pwd} 不会生成zishell
+			
+			echo $BASH_SUBSHELL -- 返回0 表示没有子shell否则表明存在子shell
+		-- shell特殊用法
+			高效使用子shell -- 后台模式
+			sleep 3000& -- 进入后台模式(bg),通过jobs显示后台作业信息
+			后台进程执行完毕后会现身
+			
+			-- 将进程列表置于后台进行
+		-- 协程
+			后台生成子shell
+			coproc sleep 10 
+			
+		-- shell内建命令
+			a 外部命令（文件系统命令，存在于shell之外的程序）
+				位于 /usr/bin,/bin, /sbin, /usr/sbin
+				which ps 找到ps命令
+				type -a ps ps命令类型
+				-- 外部命令执行时，会创建出一个子进程 （衍生 forking)
+			b 内建命令 不需要子进程来执行，执行效率更高
+				type 查看文件类型
+				echo pwd 即有内建也有外部
+			PS： 如果想使用外部命令，直接使用绝对路径执行 /bin/pwd
+			外部命令成本更高
+			
+# 一些使用技巧
+	-- Ubuntu: Ctrl+Alt+T 快速访问GNOME终端
+	
